@@ -1,0 +1,34 @@
+# Xcode user data
+**/xcuserdata/
+**/xcshareddata/WorkspaceSettings.xcsettings
+
+# User state
+*.xcuserstate
+*.xcscmblueprint
+
+# Build products
+DerivedData/
+build/
+
+# Swift Package Manager
+.build/
+Packages/
+
+# CocoaPods
+Pods/
+Podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Misc
+*.swp
+*.lock
+.DS_Store
+
