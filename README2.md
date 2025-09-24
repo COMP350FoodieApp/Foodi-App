@@ -1,1 +1,1 @@
-Francisco COMP-350 Foodi Fall 2025
+Francisco COMP-350 Fall 2025, Foodi 
