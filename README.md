@@ -1,3 +1,3 @@
-David, Hasan, Francisco, Tyler
+DAVID!
 COMP-350 Foodi
 Fall 2025
