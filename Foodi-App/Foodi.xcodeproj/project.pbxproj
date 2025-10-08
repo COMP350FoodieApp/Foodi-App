@@ -40,11 +40,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BD45B5572E81E01E004C9AB6 /* Foodi */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Foodi;
-			sourceTree = "<group>";
-		};
 		BD45B5652E81E020004C9AB6 /* FoodiTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FoodiTests;
@@ -110,7 +105,6 @@
 		BD45B54C2E81E01E004C9AB6 = {
 			isa = PBXGroup;
 			children = (
-				BD45B5572E81E01E004C9AB6 /* Foodi */,
 				BD45B5652E81E020004C9AB6 /* FoodiTests */,
 				BD45B56F2E81E020004C9AB6 /* FoodiUITests */,
 				BD1800C22E96F2B800ED1704 /* Frameworks */,
@@ -149,9 +143,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				BD45B5572E81E01E004C9AB6 /* Foodi */,
 			);
 			name = Foodi;
 			packageProductDependencies = (
