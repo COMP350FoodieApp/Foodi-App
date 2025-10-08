@@ -11,7 +11,7 @@ import SwiftUI
 struct FoodiApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SplashView() // Launches to splash screen first
         }
     }
 }
