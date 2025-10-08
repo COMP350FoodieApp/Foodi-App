@@ -1,5 +1,6 @@
 import SwiftUI
-import FirebaseCore
+import Firebasecore
+import FirebaseAnalytics
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
