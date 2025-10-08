@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		63BB654E2E971765007A349D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63BB65472E971765007A349D /* Assets.xcassets */; };
+		63BB654F2E971765007A349D /* HomeViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BB654A2E971765007A349D /* HomeViews.swift */; };
+		63BB65512E971765007A349D /* FoodiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63BB65492E971765007A349D /* FoodiApp.swift */; };
 		BD1800C42E96F2B800ED1704 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = BD1800C32E96F2B800ED1704 /* FirebaseAuth */; };
 		BD1800C62E96F2B800ED1704 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD1800C52E96F2B800ED1704 /* FirebaseCore */; };
 		BD1800C82E96F2B800ED1704 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = BD1800C72E96F2B800ED1704 /* FirebaseFirestore */; };
@@ -32,6 +35,10 @@
 
 /* Begin PBXFileReference section */
 		63818DBF2E96E29000252563 /* Foodi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Foodi.xcodeproj; sourceTree = "<group>"; };
+		63BB65472E971765007A349D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		63BB65482E971765007A349D /* Foodi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Foodi.xcodeproj; sourceTree = "<group>"; };
+		63BB65492E971765007A349D /* FoodiApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FoodiApp.swift; sourceTree = "<group>"; };
+		63BB654A2E971765007A349D /* HomeViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViews.swift; sourceTree = "<group>"; };
 		BD18009D2E96E87A00ED1704 /* Foodi.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = Foodi.xcodeproj; sourceTree = "<group>"; };
 		BD45B5552E81E01E004C9AB6 /* Foodi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Foodi.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD45B5622E81E020004C9AB6 /* FoodiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -105,6 +112,10 @@
 		BD45B54C2E81E01E004C9AB6 = {
 			isa = PBXGroup;
 			children = (
+				63BB65482E971765007A349D /* Foodi.xcodeproj */,
+				63BB65472E971765007A349D /* Assets.xcassets */,
+				63BB65492E971765007A349D /* FoodiApp.swift */,
+				63BB654A2E971765007A349D /* HomeViews.swift */,
 				BD45B5652E81E020004C9AB6 /* FoodiTests */,
 				BD45B56F2E81E020004C9AB6 /* FoodiUITests */,
 				BD1800C22E96F2B800ED1704 /* Frameworks */,
@@ -213,6 +224,7 @@
 				TargetAttributes = {
 					BD45B5542E81E01E004C9AB6 = {
 						CreatedOnToolsVersion = 16.4;
+						LastSwiftMigration = 2600;
 					};
 					BD45B5612E81E020004C9AB6 = {
 						CreatedOnToolsVersion = 16.4;
@@ -267,6 +279,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63BB654E2E971765007A349D /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -291,6 +304,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				63BB654F2E971765007A349D /* HomeViews.swift in Sources */,
+				63BB65512E971765007A349D /* FoodiApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +463,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -465,6 +481,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = COMP350.Foodi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -475,6 +492,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
