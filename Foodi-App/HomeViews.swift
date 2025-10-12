@@ -1,126 +1,58 @@
 //
-//  Untitled.swift
+//  HomeView.swift
 //  Foodi
 //
-//  Created by d-rod on 10/8/25.
+//  Created by Francisco Campa on 10/12/25.
 //
 
 import SwiftUI
 
-// MARK: - Splash Screen
-struct SplashView: View {
-    @State private var isActive = false
-    
-    var body: some View {
-        ZStack {
-            Color.blue.ignoresSafeArea() // Foodi color theme
-            Text("Foodi")
-                .font(.system(size: 42, weight: .bold))
-                .foregroundColor(.white)
-                .opacity(isActive ? 0 : 1)
-                .animation(.easeInOut(duration: 1.0), value: isActive)
-        }
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                withAnimation {
-                    isActive = true
-                }
-            }
-        }
-        .fullScreenCover(isPresented: $isActive) {
-            HomeView()
-        }
-    }
-}
-
-// MARK: - Home Screen with Widgets
 struct HomeView: View {
     @State private var selectedWidget: WidgetType? = nil
+    @State private var showPostSheet = false
     
     var body: some View {
         ZStack {
             Color(.systemBackground).ignoresSafeArea()
             
             VStack(spacing: 20) {
-                // Top row: 2 widgets
                 HStack(spacing: 20) {
-                    WidgetButton(type: .topLeft, action: { selectedWidget = .topLeft })
-                    WidgetButton(type: .topRight, action: { selectedWidget = .topRight })
+                    WidgetButton(type: .feed, action: { selectedWidget = .feed })
+                    WidgetButton(type: .leaderboard, action: { selectedWidget = .leaderboard })
                 }
-                // Bottom wide widget
-                WidgetButton(type: .bottom, action: { selectedWidget = .bottom })
+                
+                WidgetButton(type: .map, action: { selectedWidget = .map })
                     .frame(maxWidth: .infinity)
             }
             .padding()
+            
+            // Floating Post Button 🍔
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Button(action: { showPostSheet.toggle() }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.orange)
+                                .frame(width: 70, height: 70)
+                                .shadow(radius: 5)
+                            
+                            Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                                .font(.system(size: 28))
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .padding()
+                    .sheet(isPresented: $showPostSheet) {
+                        PostView()
+                    }
+                }
+            }
         }
         // Opens detail view when a widget is tapped
         .fullScreenCover(item: $selectedWidget) { widget in
             WidgetDetailView(type: widget, selectedWidget: $selectedWidget)
-        }
-    }
-}
-
-// MARK: - Widget Button
-struct WidgetButton: View {
-    var type: WidgetType
-    var action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.blue.opacity(0.85)) // Match Foodi color
-                    .frame(height: type == .bottom ? 180 : 120)
-                    .shadow(radius: 3)
-                
-                Text(type.title)
-                    .font(.headline)
-                    .foregroundColor(.white)
-            }
-        }
-    }
-}
-
-// MARK: - Widget Detail View
-struct WidgetDetailView: View {
-    var type: WidgetType
-    @Binding var selectedWidget: WidgetType?
-    
-    var body: some View {
-        ZStack(alignment: .topTrailing) {
-            Color.white.ignoresSafeArea()
-            
-            VStack {
-                Spacer()
-                Text("\(type.title) Page")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.black)
-                Spacer()
-            }
-            
-            // Exit (X) button
-            Button(action: { selectedWidget = nil }) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(.system(size: 34))
-                    .foregroundColor(.gray)
-                    .padding()
-            }
-        }
-    }
-}
-
-// MARK: - Widget Type Enum
-enum WidgetType: String, Identifiable {
-    case topLeft, topRight, bottom
-    
-    var id: String { rawValue }
-    
-    var title: String {
-        switch self {
-        case .topLeft: return "Widget 1"
-        case .topRight: return "Widget 2"
-        case .bottom: return "Widget 3"
         }
     }
 }
