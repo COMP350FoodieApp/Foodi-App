@@ -54,7 +54,7 @@ struct HomeView: View {
                     Button(action: { showPostSheet.toggle() }) {
                         ZStack {
                             Circle()
-                                .fill(Color.orange)
+                                .fill(Color.blue)
                                 .frame(width: 70, height: 70)
                                 .shadow(radius: 5)
                             
