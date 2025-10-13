@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 // MARK: - Widget Button
 struct WidgetButton: View {
@@ -17,35 +18,83 @@ struct WidgetButton: View {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color.blue.opacity(0.85))
-                    .frame(height: type == .map ? 180 : 120)
                     .shadow(radius: 3)
+                    .frame(height: 300) // taller widgets
                 
                 Text(type.title)
                     .font(.headline)
                     .foregroundColor(.white)
+                    .padding()
             }
         }
     }
 }
 
-// MARK: - Widget Detail View
+// MARK: - Widget Detail View (Expanded full-screen views)
 struct WidgetDetailView: View {
     var type: WidgetType
     @Binding var selectedWidget: WidgetType?
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            Color.white.ignoresSafeArea()
+            Color(.systemBackground).ignoresSafeArea()
             
             VStack {
-                Spacer()
-                Text("\(type.title) Page")
-                    .font(.largeTitle)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.black)
-                Spacer()
+                switch type {
+                case .feed:
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            Text("🍔 Your Food Feed")
+                                .font(.largeTitle).bold()
+                                .padding(.top, 20)
+                            
+                            ForEach(0..<10) { index in
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.orange.opacity(0.2))
+                                    .frame(height: 120)
+                                    .overlay(Text("Food Post #\(index + 1)"))
+                                    .padding(.horizontal)
+                            }
+                        }
+                    }
+                    
+                case .leaderboard:
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            Text("🏆 Top Foodies Leaderboard")
+                                .font(.largeTitle).bold()
+                                .padding(.top, 20)
+                            
+                            ForEach(1..<11) { rank in
+                                HStack {
+                                    Text("#\(rank)").font(.title3).bold()
+                                    Spacer()
+                                    Text("User \(rank)").font(.headline)
+                                    Spacer()
+                                    Text("\(Int.random(in: 100...500)) pts")
+                                        .font(.subheadline).foregroundColor(.gray)
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.orange.opacity(0.2))
+                                )
+                                .padding(.horizontal)
+                            }
+                        }
+                    }
+                    
+                case .map:
+                    // Full interactive map view
+                    ZStack {
+                        MapWidgetView()
+                            .ignoresSafeArea(edges: .bottom)
+                            .padding(.top, 40) // moves MapWidgetView down slightly
+                    }
+                }
             }
             
+            // Close button
             Button(action: { selectedWidget = nil }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 34))
@@ -70,4 +119,3 @@ enum WidgetType: String, Identifiable {
         }
     }
 }
-
