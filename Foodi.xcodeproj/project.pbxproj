@@ -6,41 +6,53 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		59526312A73E38EB4EC75C09 /* Pods_FoodiUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0B8208E05EC7ED743EC75558 /* Pods_FoodiUITests.framework */; };
+		BD7AA5D62E9748B9003DA16B /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = BD7AA5D52E9748B9003DA16B /* FirebaseAuth */; };
+		BD7AA5D82E9748B9003DA16B /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = BD7AA5D72E9748B9003DA16B /* FirebaseCore */; };
+		BD7AA5DA2E9748B9003DA16B /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = BD7AA5D92E9748B9003DA16B /* FirebaseFirestore */; };
+		BD7AA5DC2E9748B9003DA16B /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = BD7AA5DB2E9748B9003DA16B /* FirebaseStorage */; };
+		D1542CAA6C71565BC56792A5 /* Pods_FoodiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 068575AA2803823E742758FD /* Pods_FoodiTests.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
-		BD8D57FC2E97002F00F7B813 /* PBXContainerItemProxy */ = {
+		BDC173CE2E97059700C4B5CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BD8D57E62E97002D00F7B813 /* Project object */;
+			containerPortal = BDC173B82E97059400C4B5CE /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BD8D57ED2E97002D00F7B813;
+			remoteGlobalIDString = BDC173BF2E97059400C4B5CE;
 			remoteInfo = Foodi;
 		};
-		BD8D58062E97002F00F7B813 /* PBXContainerItemProxy */ = {
+		BDC173D82E97059700C4B5CE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = BD8D57E62E97002D00F7B813 /* Project object */;
+			containerPortal = BDC173B82E97059400C4B5CE /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = BD8D57ED2E97002D00F7B813;
+			remoteGlobalIDString = BDC173BF2E97059400C4B5CE;
 			remoteInfo = Foodi;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BD8D57EE2E97002D00F7B813 /* Foodi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Foodi.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD8D57FB2E97002F00F7B813 /* FoodiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		BD8D58052E97002F00F7B813 /* FoodiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		068575AA2803823E742758FD /* Pods_FoodiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FoodiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		0B8208E05EC7ED743EC75558 /* Pods_FoodiUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FoodiUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		840745B83B560CC79918866B /* Pods_Foodi.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Foodi.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDC173C02E97059400C4B5CE /* Foodi.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Foodi.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDC173CD2E97059700C4B5CE /* FoodiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BDC173D72E97059700C4B5CE /* FoodiUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FoodiUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		BD8D57F02E97002D00F7B813 /* Foodi */ = {
+		BDC173C22E97059400C4B5CE /* Foodi-App */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Foodi;
+			path = "Foodi-App";
 			sourceTree = "<group>";
 		};
-		BD8D57FE2E97002F00F7B813 /* FoodiTests */ = {
+		BDC173D02E97059700C4B5CE /* FoodiTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FoodiTests;
 			sourceTree = "<group>";
 		};
-		BD8D58082E97002F00F7B813 /* FoodiUITests */ = {
+		BDC173DA2E97059700C4B5CE /* FoodiUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = FoodiUITests;
 			sourceTree = "<group>";
@@ -48,46 +60,63 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		BD8D57EB2E97002D00F7B813 /* Frameworks */ = {
+		BDC173BD2E97059400C4B5CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BD7AA5D82E9748B9003DA16B /* FirebaseCore in Frameworks */,
+				BD7AA5DC2E9748B9003DA16B /* FirebaseStorage in Frameworks */,
+				BD7AA5D62E9748B9003DA16B /* FirebaseAuth in Frameworks */,
+				BD7AA5DA2E9748B9003DA16B /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BD8D57F82E97002F00F7B813 /* Frameworks */ = {
+		BDC173CA2E97059700C4B5CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1542CAA6C71565BC56792A5 /* Pods_FoodiTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BD8D58022E97002F00F7B813 /* Frameworks */ = {
+		BDC173D42E97059700C4B5CE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				59526312A73E38EB4EC75C09 /* Pods_FoodiUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		BD8D57E52E97002D00F7B813 = {
+		BD7AA5D42E9748B9003DA16B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				BD8D57F02E97002D00F7B813 /* Foodi */,
-				BD8D57FE2E97002F00F7B813 /* FoodiTests */,
-				BD8D58082E97002F00F7B813 /* FoodiUITests */,
-				BD8D57EF2E97002D00F7B813 /* Products */,
+				840745B83B560CC79918866B /* Pods_Foodi.framework */,
+				068575AA2803823E742758FD /* Pods_FoodiTests.framework */,
+				0B8208E05EC7ED743EC75558 /* Pods_FoodiUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		BDC173B72E97059400C4B5CE = {
+			isa = PBXGroup;
+			children = (
+				BDC173C22E97059400C4B5CE /* Foodi-App */,
+				BDC173D02E97059700C4B5CE /* FoodiTests */,
+				BDC173DA2E97059700C4B5CE /* FoodiUITests */,
+				BD7AA5D42E9748B9003DA16B /* Frameworks */,
+				BDC173C12E97059400C4B5CE /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		BD8D57EF2E97002D00F7B813 /* Products */ = {
+		BDC173C12E97059400C4B5CE /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				BD8D57EE2E97002D00F7B813 /* Foodi.app */,
-				BD8D57FB2E97002F00F7B813 /* FoodiTests.xctest */,
-				BD8D58052E97002F00F7B813 /* FoodiUITests.xctest */,
+				BDC173C02E97059400C4B5CE /* Foodi.app */,
+				BDC173CD2E97059700C4B5CE /* FoodiTests.xctest */,
+				BDC173D72E97059700C4B5CE /* FoodiUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,134 +124,140 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		BD8D57ED2E97002D00F7B813 /* Foodi */ = {
+		BDC173BF2E97059400C4B5CE /* Foodi */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BD8D580F2E97002F00F7B813 /* Build configuration list for PBXNativeTarget "Foodi" */;
+			buildConfigurationList = BDC173E12E97059700C4B5CE /* Build configuration list for PBXNativeTarget "Foodi" */;
 			buildPhases = (
-				BD8D57EA2E97002D00F7B813 /* Sources */,
-				BD8D57EB2E97002D00F7B813 /* Frameworks */,
-				BD8D57EC2E97002D00F7B813 /* Resources */,
+				BDC173BC2E97059400C4B5CE /* Sources */,
+				BDC173BD2E97059400C4B5CE /* Frameworks */,
+				BDC173BE2E97059400C4B5CE /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				BD8D57F02E97002D00F7B813 /* Foodi */,
+				BDC173C22E97059400C4B5CE /* Foodi-App */,
 			);
 			name = Foodi;
 			packageProductDependencies = (
+				BD7AA5D52E9748B9003DA16B /* FirebaseAuth */,
+				BD7AA5D72E9748B9003DA16B /* FirebaseCore */,
+				BD7AA5D92E9748B9003DA16B /* FirebaseFirestore */,
+				BD7AA5DB2E9748B9003DA16B /* FirebaseStorage */,
 			);
 			productName = Foodi;
-			productReference = BD8D57EE2E97002D00F7B813 /* Foodi.app */;
+			productReference = BDC173C02E97059400C4B5CE /* Foodi.app */;
 			productType = "com.apple.product-type.application";
 		};
-		BD8D57FA2E97002F00F7B813 /* FoodiTests */ = {
+		BDC173CC2E97059700C4B5CE /* FoodiTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BD8D58122E97002F00F7B813 /* Build configuration list for PBXNativeTarget "FoodiTests" */;
+			buildConfigurationList = BDC173E42E97059700C4B5CE /* Build configuration list for PBXNativeTarget "FoodiTests" */;
 			buildPhases = (
-				BD8D57F72E97002F00F7B813 /* Sources */,
-				BD8D57F82E97002F00F7B813 /* Frameworks */,
-				BD8D57F92E97002F00F7B813 /* Resources */,
+				57E5426874E3B2335CC44BA5 /* [CP] Check Pods Manifest.lock */,
+				BDC173C92E97059700C4B5CE /* Sources */,
+				BDC173CA2E97059700C4B5CE /* Frameworks */,
+				BDC173CB2E97059700C4B5CE /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				BD8D57FD2E97002F00F7B813 /* PBXTargetDependency */,
+				BDC173CF2E97059700C4B5CE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				BD8D57FE2E97002F00F7B813 /* FoodiTests */,
+				BDC173D02E97059700C4B5CE /* FoodiTests */,
 			);
 			name = FoodiTests;
-			packageProductDependencies = (
-			);
 			productName = FoodiTests;
-			productReference = BD8D57FB2E97002F00F7B813 /* FoodiTests.xctest */;
+			productReference = BDC173CD2E97059700C4B5CE /* FoodiTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		BD8D58042E97002F00F7B813 /* FoodiUITests */ = {
+		BDC173D62E97059700C4B5CE /* FoodiUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BD8D58152E97002F00F7B813 /* Build configuration list for PBXNativeTarget "FoodiUITests" */;
+			buildConfigurationList = BDC173E72E97059700C4B5CE /* Build configuration list for PBXNativeTarget "FoodiUITests" */;
 			buildPhases = (
-				BD8D58012E97002F00F7B813 /* Sources */,
-				BD8D58022E97002F00F7B813 /* Frameworks */,
-				BD8D58032E97002F00F7B813 /* Resources */,
+				14D78BA5DCB638758AF37FFC /* [CP] Check Pods Manifest.lock */,
+				BDC173D32E97059700C4B5CE /* Sources */,
+				BDC173D42E97059700C4B5CE /* Frameworks */,
+				BDC173D52E97059700C4B5CE /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				BD8D58072E97002F00F7B813 /* PBXTargetDependency */,
+				BDC173D92E97059700C4B5CE /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				BD8D58082E97002F00F7B813 /* FoodiUITests */,
+				BDC173DA2E97059700C4B5CE /* FoodiUITests */,
 			);
 			name = FoodiUITests;
-			packageProductDependencies = (
-			);
 			productName = FoodiUITests;
-			productReference = BD8D58052E97002F00F7B813 /* FoodiUITests.xctest */;
+			productReference = BDC173D72E97059700C4B5CE /* FoodiUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		BD8D57E62E97002D00F7B813 /* Project object */ = {
+		BDC173B82E97059400C4B5CE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2600;
 				LastUpgradeCheck = 2600;
 				TargetAttributes = {
-					BD8D57ED2E97002D00F7B813 = {
+					BDC173BF2E97059400C4B5CE = {
 						CreatedOnToolsVersion = 26.0.1;
+						LastSwiftMigration = 2600;
 					};
-					BD8D57FA2E97002F00F7B813 = {
+					BDC173CC2E97059700C4B5CE = {
 						CreatedOnToolsVersion = 26.0.1;
-						TestTargetID = BD8D57ED2E97002D00F7B813;
+						TestTargetID = BDC173BF2E97059400C4B5CE;
 					};
-					BD8D58042E97002F00F7B813 = {
+					BDC173D62E97059700C4B5CE = {
 						CreatedOnToolsVersion = 26.0.1;
-						TestTargetID = BD8D57ED2E97002D00F7B813;
+						TestTargetID = BDC173BF2E97059400C4B5CE;
 					};
 				};
 			};
-			buildConfigurationList = BD8D57E92E97002D00F7B813 /* Build configuration list for PBXProject "Foodi" */;
+			buildConfigurationList = BDC173BB2E97059400C4B5CE /* Build configuration list for PBXProject "Foodi" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = BD8D57E52E97002D00F7B813;
+			mainGroup = BDC173B72E97059400C4B5CE;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				BD7AA5D32E974899003DA16B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = BD8D57EF2E97002D00F7B813 /* Products */;
+			productRefGroup = BDC173C12E97059400C4B5CE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				BD8D57ED2E97002D00F7B813 /* Foodi */,
-				BD8D57FA2E97002F00F7B813 /* FoodiTests */,
-				BD8D58042E97002F00F7B813 /* FoodiUITests */,
+				BDC173BF2E97059400C4B5CE /* Foodi */,
+				BDC173CC2E97059700C4B5CE /* FoodiTests */,
+				BDC173D62E97059700C4B5CE /* FoodiUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		BD8D57EC2E97002D00F7B813 /* Resources */ = {
+		BDC173BE2E97059400C4B5CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BD8D57F92E97002F00F7B813 /* Resources */ = {
+		BDC173CB2E97059700C4B5CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BD8D58032E97002F00F7B813 /* Resources */ = {
+		BDC173D52E97059700C4B5CE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -231,22 +266,69 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		14D78BA5DCB638758AF37FFC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FoodiUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		57E5426874E3B2335CC44BA5 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FoodiTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
-		BD8D57EA2E97002D00F7B813 /* Sources */ = {
+		BDC173BC2E97059400C4B5CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BD8D57F72E97002F00F7B813 /* Sources */ = {
+		BDC173C92E97059700C4B5CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		BD8D58012E97002F00F7B813 /* Sources */ = {
+		BDC173D32E97059700C4B5CE /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -256,20 +338,20 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		BD8D57FD2E97002F00F7B813 /* PBXTargetDependency */ = {
+		BDC173CF2E97059700C4B5CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BD8D57ED2E97002D00F7B813 /* Foodi */;
-			targetProxy = BD8D57FC2E97002F00F7B813 /* PBXContainerItemProxy */;
+			target = BDC173BF2E97059400C4B5CE /* Foodi */;
+			targetProxy = BDC173CE2E97059700C4B5CE /* PBXContainerItemProxy */;
 		};
-		BD8D58072E97002F00F7B813 /* PBXTargetDependency */ = {
+		BDC173D92E97059700C4B5CE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = BD8D57ED2E97002D00F7B813 /* Foodi */;
-			targetProxy = BD8D58062E97002F00F7B813 /* PBXContainerItemProxy */;
+			target = BDC173BF2E97059400C4B5CE /* Foodi */;
+			targetProxy = BDC173D82E97059700C4B5CE /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		BD8D580D2E97002F00F7B813 /* Debug */ = {
+		BDC173DF2E97059700C4B5CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -332,7 +414,7 @@
 			};
 			name = Debug;
 		};
-		BD8D580E2E97002F00F7B813 /* Release */ = {
+		BDC173E02E97059700C4B5CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -388,11 +470,12 @@
 			};
 			name = Release;
 		};
-		BD8D58102E97002F00F7B813 /* Debug */ = {
+		BDC173E22E97059700C4B5CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -413,17 +496,19 @@
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		BD8D58112E97002F00F7B813 /* Release */ = {
+		BDC173E32E97059700C4B5CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -450,7 +535,7 @@
 			};
 			name = Release;
 		};
-		BD8D58132E97002F00F7B813 /* Debug */ = {
+		BDC173E52E97059700C4B5CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -471,7 +556,7 @@
 			};
 			name = Debug;
 		};
-		BD8D58142E97002F00F7B813 /* Release */ = {
+		BDC173E62E97059700C4B5CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -492,7 +577,7 @@
 			};
 			name = Release;
 		};
-		BD8D58162E97002F00F7B813 /* Debug */ = {
+		BDC173E82E97059700C4B5CE /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -511,7 +596,7 @@
 			};
 			name = Debug;
 		};
-		BD8D58172E97002F00F7B813 /* Release */ = {
+		BDC173E92E97059700C4B5CE /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -533,43 +618,77 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		BD8D57E92E97002D00F7B813 /* Build configuration list for PBXProject "Foodi" */ = {
+		BDC173BB2E97059400C4B5CE /* Build configuration list for PBXProject "Foodi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BD8D580D2E97002F00F7B813 /* Debug */,
-				BD8D580E2E97002F00F7B813 /* Release */,
+				BDC173DF2E97059700C4B5CE /* Debug */,
+				BDC173E02E97059700C4B5CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BD8D580F2E97002F00F7B813 /* Build configuration list for PBXNativeTarget "Foodi" */ = {
+		BDC173E12E97059700C4B5CE /* Build configuration list for PBXNativeTarget "Foodi" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BD8D58102E97002F00F7B813 /* Debug */,
-				BD8D58112E97002F00F7B813 /* Release */,
+				BDC173E22E97059700C4B5CE /* Debug */,
+				BDC173E32E97059700C4B5CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BD8D58122E97002F00F7B813 /* Build configuration list for PBXNativeTarget "FoodiTests" */ = {
+		BDC173E42E97059700C4B5CE /* Build configuration list for PBXNativeTarget "FoodiTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BD8D58132E97002F00F7B813 /* Debug */,
-				BD8D58142E97002F00F7B813 /* Release */,
+				BDC173E52E97059700C4B5CE /* Debug */,
+				BDC173E62E97059700C4B5CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BD8D58152E97002F00F7B813 /* Build configuration list for PBXNativeTarget "FoodiUITests" */ = {
+		BDC173E72E97059700C4B5CE /* Build configuration list for PBXNativeTarget "FoodiUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				BD8D58162E97002F00F7B813 /* Debug */,
-				BD8D58172E97002F00F7B813 /* Release */,
+				BDC173E82E97059700C4B5CE /* Debug */,
+				BDC173E92E97059700C4B5CE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		BD7AA5D32E974899003DA16B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BD7AA5D52E9748B9003DA16B /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD7AA5D32E974899003DA16B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		BD7AA5D72E9748B9003DA16B /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD7AA5D32E974899003DA16B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		BD7AA5D92E9748B9003DA16B /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD7AA5D32E974899003DA16B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		BD7AA5DB2E9748B9003DA16B /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BD7AA5D32E974899003DA16B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = BD8D57E62E97002D00F7B813 /* Project object */;
+	rootObject = BDC173B82E97059400C4B5CE /* Project object */;
 }
