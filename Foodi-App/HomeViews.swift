@@ -16,17 +16,37 @@ struct HomeView: View {
             Color(.systemBackground).ignoresSafeArea()
             
             VStack(spacing: 20) {
+                // Top row: Feed + Leaderboard
                 HStack(spacing: 20) {
-                    WidgetButton(type: .feed, action: { selectedWidget = .feed })
-                    WidgetButton(type: .leaderboard, action: { selectedWidget = .leaderboard })
+                    WidgetButton(type: .feed) {
+                        selectedWidget = .feed
+                    }
+                    WidgetButton(type: .leaderboard) {
+                        selectedWidget = .leaderboard
+                    }
                 }
                 
-                WidgetButton(type: .map, action: { selectedWidget = .map })
-                    .frame(maxWidth: .infinity)
+                // Compact map widget
+                ZStack {
+                    MapWidgetView() // full map with search bar
+                        .disabled(true) // prevent interaction in compact view
+                        .frame(height: 350)
+                        .cornerRadius(16)
+                        .shadow(radius: 3)
+                    
+                    // Tap overlay
+                    Rectangle()
+                        .foregroundColor(.clear)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            selectedWidget = .map
+                        }
+                }
+                .padding(.top, 10)
             }
             .padding()
             
-            // Floating Post Button 🍔
+            // Floating Post Button
             VStack {
                 Spacer()
                 HStack {
@@ -50,7 +70,7 @@ struct HomeView: View {
                 }
             }
         }
-        // Opens detail view when a widget is tapped
+        // Full-screen view for widget expansion
         .fullScreenCover(item: $selectedWidget) { widget in
             WidgetDetailView(type: widget, selectedWidget: $selectedWidget)
         }
