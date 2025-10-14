@@ -7,20 +7,24 @@
 
 import SwiftUI
 import PhotosUI
+import MapKit
 
 struct PostView: View {
     @Environment(\.dismiss) private var dismiss
     
     @State private var title: String = ""
     @State private var description: String = ""
+    @State private var restaurantTag: String = ""
+    @State private var selectedWidget: WidgetType? = nil
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var selectedImageData: Data? = nil
+    @State private var showRestaurantMap = false
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-                    
+    
                     // Image Picker Preview
                     if let data = selectedImageData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
@@ -31,19 +35,33 @@ struct PostView: View {
                             .cornerRadius(16)
                             .shadow(radius: 3)
                     } else {
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.blue.opacity(0.15))
-                            .frame(height: 180)
-                            .overlay(
-                                VStack {
-                                    Image(systemName: "photo.badge.plus")
-                                        .font(.system(size: 36))
-                                        .foregroundColor(.blue)
-                                    Text("Attach a photo")
-                                        .foregroundColor(.blue)
-                                        .font(.headline)
+                        PhotosPicker(
+                            selection: $selectedPhoto,
+                            matching: .images,
+                            photoLibrary: .shared()
+                        ) {
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(Color.blue.opacity(0.15))
+                                .frame(height: 180)
+                                .overlay(
+                                    VStack {
+                                        Image(systemName: "photo.badge.plus")
+                                            .font(.system(size: 36))
+                                            .foregroundColor(.blue)
+                                        Text("Attach a photo")
+                                            .foregroundColor(.blue)
+                                            .font(.headline)
+                                    }
+                                )
+                        }
+                        .onChange(of: selectedPhoto) {
+                            Task {
+                                if let item = selectedPhoto,
+                                   let data = try? await item.loadTransferable(type: Data.self) {
+                                    selectedImageData = data
                                 }
-                            )
+                            }
+                        }
                     }
                     
                     // Title Field
@@ -53,6 +71,28 @@ struct PostView: View {
                         .cornerRadius(10)
                         .font(.headline)
                     
+                    // Restaurant Tag Field
+                    Button(action: {
+                        showRestaurantMap = true
+                    }) {
+                        HStack {
+                            Image(systemName: "mappin.and.ellipse")
+                                .foregroundColor(.blue)
+                            Text(restaurantTag.isEmpty ? "Select a restaurant" : restaurantTag)
+                                .foregroundColor(restaurantTag.isEmpty ? .secondary : .primary)
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Color(.secondarySystemBackground))
+                        .cornerRadius(10)
+                    }
+                    .fullScreenCover(isPresented: $showRestaurantMap) {
+                        MapWidgetView(onSelectRestaurant: { selectedRestaurant in
+                            restaurantTag = selectedRestaurant.item.name ?? "Unknown"
+                            showRestaurantMap = false
+                        })
+                    }
+                    
                     // Description Field
                     TextField("Write a description...", text: $description, axis: .vertical)
                         .lineLimit(5, reservesSpace: true)
@@ -60,27 +100,7 @@ struct PostView: View {
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                     
-                    // File / Photo Picker
-                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                        HStack {
-                            Image(systemName: "paperclip.circle.fill")
-                                .foregroundColor(.blue)
-                            Text("Attach Photo or File")
-                                .foregroundColor(.blue)
-                            Spacer()
-                        }
-                        .padding()
-                        .background(Color.blue.opacity(0.1))
-                        .cornerRadius(12)
-                    }
-                    .onChange(of: selectedPhoto) { newValue, _ in
-                        Task {
-                            if let item = newValue,
-                               let data = try? await item.loadTransferable(type: Data.self) {
-                                selectedImageData = data
-                            }
-                        }
-                    }
+                    // (Removed file/photo picker with paperclip icon)
 
                     
                     // Submit Button
@@ -97,7 +117,7 @@ struct PostView: View {
                 }
                 .padding()
             }
-            .navigationTitle("New Post")
+            .navigationTitle("Share Your Food")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Close") { dismiss() }

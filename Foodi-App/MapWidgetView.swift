@@ -10,6 +10,7 @@ import MapKit
 import CoreLocation
 
 struct MapWidgetView: View {
+    var onSelectRestaurant: ((RestaurantResult) -> Void)? = nil
     @State private var position = MapCameraPosition.region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 34.2411, longitude: -119.0434),
@@ -129,39 +130,44 @@ struct MapWidgetView: View {
 
     
     private func restaurantInfoCard(for restaurant: RestaurantResult) -> some View {
-        VStack(alignment: .leading, spacing: 6) {
-            Text(restaurant.item.name ?? "Unknown")
-                .font(.headline)
-            
-            if let userLoc = userLocation {
-                let distance = restaurant.item.location.distance(from: userLoc)
-                Text(String(format: "📍 %.1f km away", distance / 1000))
+        Button {
+            onSelectRestaurant?(restaurant)
+        } label: {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(restaurant.item.name ?? "Unknown")
+                    .font(.headline)
+                
+                if let userLoc = userLocation {
+                    let distance = restaurant.item.location.distance(from: userLoc)
+                    Text(String(format: "📍 %.1f km away", distance / 1000))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+                
+                Text(String(format: "⭐ Relevance: %.0f%%", restaurant.relevance * 100))
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
-            }
-            
-            Text(String(format: "⭐ Relevance: %.0f%%", restaurant.relevance * 100))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-            
-            // User rating placeholder - just so we can show we have something, we can add real variation later
-            HStack(spacing: 4) {
-                ForEach(0..<5) { _ in
-                    Image(systemName: "fork.knife.circle.fill")
-                        .foregroundColor(.orange)
-                        .font(.system(size: 18))
+                
+                // User rating placeholder - just so we can show we have something, we can add real variation later
+                HStack(spacing: 4) {
+                    ForEach(0..<5) { _ in
+                        Image(systemName: "fork.knife.circle.fill")
+                            .foregroundColor(.orange)
+                            .font(.system(size: 18))
+                    }
                 }
+                .padding(.top, 4)
+                
+                Spacer()
             }
-            .padding(.top, 4)
-            
-            Spacer()
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.ultraThinMaterial)
+            .cornerRadius(16)
+            .padding(.horizontal)
+            .padding(.bottom, 20)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.ultraThinMaterial)
-        .cornerRadius(16)
-        .padding(.horizontal)
-        .padding(.bottom, 20)
+        .buttonStyle(PlainButtonStyle())
     }
     
     // MARK: - Logic
