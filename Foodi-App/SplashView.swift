@@ -27,7 +27,7 @@ struct SplashView: View {
             }
         }
         .fullScreenCover(isPresented: $isActive) {
-            HomeView()
+           RootContainer()
         }
     }
 }
