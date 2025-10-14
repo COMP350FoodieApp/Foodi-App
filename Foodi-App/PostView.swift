@@ -108,7 +108,7 @@ struct PostView: View {
     
     // MARK: - Submit Action
     private func submitPost() {
-        // 🚀 Placeholder for posting logic (Firebase, backend, etc.)
+        // Placeholder for posting logic (Firebase, backend, etc.)
         print("New post created:")
         print("Title: \(title)")
         print("Description: \(description)")

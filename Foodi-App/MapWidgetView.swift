@@ -28,17 +28,24 @@ struct MapWidgetView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
+            
             // MARK: - Main Map
-            Map(position: $position, selection: $selectedRestaurantID) {
-                ForEach(searchResults) { result in
-                    Marker(result.item.name ?? "Unknown", coordinate: result.item.location.coordinate)
-                        .tag(result.id)
+            MapReader { proxy in
+                Map(position: $position, selection: $selectedRestaurantID) {
+                    ForEach(searchResults) { result in
+                        Marker(result.item.name ?? "Unknown", coordinate: result.item.location.coordinate)
+                            .tag(result.id)
+                    }
+                }
+                .mapStyle(.standard)
+                .ignoresSafeArea()
+                .onMapCameraChange { context in
+                    // Keep position in sync whenever user manually zooms or pans
+                    position = .region(context.region)
                 }
             }
-            .mapStyle(.standard)
-            .ignoresSafeArea()
             .onAppear { requestUserLocation() }
-            
+
             // MARK: - Overlay UI
             VStack {
                 // Search bar
