@@ -27,7 +27,6 @@ struct ProfileView: View {
                    password.count >= 8
         }
     }
- 
     
     var body: some View {
         ScrollView {
