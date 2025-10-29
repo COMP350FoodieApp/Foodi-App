@@ -76,6 +76,7 @@ struct HomeView: View {
                         .onTapGesture {
                             selectedWidget = .map
                         }
+
                 }
                 .padding(.top, 10)
             }
@@ -105,6 +106,8 @@ struct HomeView: View {
                     }
                 }
             }
+            
+            FloatingSearchUsersButton()
         }
         // Full-screen view for widget expansion
         .fullScreenCover(item: $selectedWidget) { widget in
@@ -112,3 +115,53 @@ struct HomeView: View {
         }
     }
 }
+
+// Floating Search Users Button (Bottom Left)
+struct FloatingSearchUsersButton: View {
+    @State private var showUserSearch = false
+
+    var body: some View {
+        VStack {
+            Spacer()
+            HStack {
+                // Search Users Button (Bottom-Left)
+                Button(action: {
+                    showUserSearch.toggle()
+                }) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.blue)
+                            .frame(width: 70, height: 70)
+                            .shadow(radius: 5)
+
+                        // Combined person + magnifying glass icon
+                        ZStack {
+                            Image(systemName: "person.fill")
+                                .font(.system(size: 26, weight: .semibold))
+                                .offset(x: -3, y: 0)
+
+                            Image(systemName: "magnifyingglass")
+                                .font(.system(size: 16, weight: .semibold))
+                                .offset(x: 8, y: 4)
+                        }
+                        .foregroundColor(.white)
+                    }
+                }
+                // ✅ Perfect alignment with post button
+                .padding(.bottom, 38)
+                .padding(.leading, 15)
+                // ✅ Present search view with NavigationStack (fixes white screen issue)
+                .sheet(isPresented: $showUserSearch) {
+                    NavigationStack {
+                        UserSearchView()
+                    }
+                }
+
+                Spacer()
+            }
+        }
+        .ignoresSafeArea(edges: .bottom)
+    }
+}
+
+
