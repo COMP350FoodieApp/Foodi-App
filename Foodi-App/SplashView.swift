@@ -12,7 +12,7 @@ struct SplashView: View {
     
     var body: some View {
         ZStack {
-            Color.blue.ignoresSafeArea()
+            Color.foodiBlue.ignoresSafeArea()   // was Color.blue
             Text("Foodi")
                 .font(.system(size: 42, weight: .bold))
                 .foregroundColor(.white)

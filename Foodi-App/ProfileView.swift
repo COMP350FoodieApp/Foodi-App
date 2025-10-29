@@ -3,7 +3,10 @@ import FirebaseAuth
 import FirebaseFirestore
 
 struct ProfileView: View {
-    // Form state
+    // MARK: - Environment
+    @Environment(\.dismiss) private var dismiss
+
+    // MARK: - Form state
     @State private var fullName = ""
     @State private var username = ""
     @State private var password = ""
@@ -12,11 +15,11 @@ struct ProfileView: View {
     @State private var isSubmitting = false
     @State private var showSuccess = false
     @State private var errorMessage = ""
-    
-    // Auth state
+
+    // MARK: - Auth state
     @State private var currentUser: User? = AuthManager.shared.getCurrentUser()
     @State private var isSignUp = true
-    
+
     private var formIsValid: Bool {
         if isSignUp {
             return !fullName.trimmingCharacters(in: .whitespaces).isEmpty &&
@@ -27,14 +30,14 @@ struct ProfileView: View {
                    password.count >= 8
         }
     }
-    
+
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
                 Image(systemName: "person.crop.circle.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(.secondary)
-                
+
                 if let user = currentUser {
                     // MARK: - Logged-in view
                     VStack(spacing: 10) {
@@ -43,14 +46,14 @@ struct ProfileView: View {
                         Text(user.email ?? "Unknown user")
                             .font(.title3)
                             .fontWeight(.semibold)
-                        
+
                         Button("Sign Out") {
                             if AuthManager.shared.signOut() {
                                 currentUser = nil
                             }
                         }
                         .buttonStyle(.borderedProminent)
-                        .tint(.red)
+                        .tint(.red) // keep sign-out red on purpose
                         .padding(.top, 8)
                     }
                 } else {
@@ -63,14 +66,14 @@ struct ProfileView: View {
                             .padding()
                             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
                     }
-                    
+
                     TextField("Username", text: $username)
                         .textContentType(.username)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
                         .padding()
                         .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                    
+
                     ZStack {
                         Group {
                             if showPassword {
@@ -82,12 +85,10 @@ struct ProfileView: View {
                         .textContentType(.newPassword)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
-                        
+
                         HStack {
                             Spacer()
-                            Button {
-                                showPassword.toggle()
-                            } label: {
+                            Button { showPassword.toggle() } label: {
                                 Image(systemName: showPassword ? "eye.slash" : "eye")
                                     .imageScale(.medium)
                                     .padding(.trailing, 12)
@@ -97,38 +98,35 @@ struct ProfileView: View {
                     }
                     .padding()
                     .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
-                    
+
                     if isSignUp {
                         TextField("Short bio (optional)", text: $bio)
                             .textInputAutocapitalization(.sentences)
                             .padding()
                             .background(.thinMaterial, in: RoundedRectangle(cornerRadius: 12))
                     }
-                    
+
                     Button {
                         handleAuthAction()
                     } label: {
                         HStack {
-                            if isSubmitting {
-                                ProgressView().tint(.white)
-                            }
+                            if isSubmitting { ProgressView().tint(.white) }
                             Text(isSignUp ? "Create Profile" : "Log In")
                                 .fontWeight(.semibold)
                         }
                         .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
+                    .tint(.foodiBlue) // primary action uses brand blue
                     .disabled(!formIsValid || isSubmitting)
                     .padding(.top, 8)
-                    
+
                     Button(isSignUp ? "Already have an account? Log in" : "Need an account? Sign up") {
-                        withAnimation {
-                            isSignUp.toggle()
-                        }
+                        withAnimation { isSignUp.toggle() }
                     }
                     .font(.footnote)
                     .padding(.top, 4)
-                    
+
                     if !errorMessage.isEmpty {
                         Text(errorMessage)
                             .foregroundColor(.red)
@@ -140,18 +138,30 @@ struct ProfileView: View {
             }
             .padding()
         }
-        .navigationTitle("Profile")
+        // Hide default nav bar (“Profile”) and insert Foodi banner
+        .toolbar(.hidden, for: .navigationBar)
+        .safeAreaInset(edge: .top) {
+            FoodiHeader(
+              
+                bannerColor: .foodiBlue,
+                titleText: "Foodi",
+                onBack: { dismiss() },        // ← shows chevron and goes back
+                onProfile: {},
+                onSettings: {}
+            )
+        }
+        // Keep your alert
         .alert("Success!", isPresented: $showSuccess) {
             Button("OK", role: .cancel) {}
         }
     }
-    
+
     // MARK: - Auth Flow
     private func handleAuthAction() {
         guard !username.isEmpty, password.count >= 8 else { return }
         isSubmitting = true
         errorMessage = ""
-        
+
         if isSignUp {
             AuthManager.shared.signUp(fullName: fullName, username: username, bio: bio, password: password) { result in
                 DispatchQueue.main.async {

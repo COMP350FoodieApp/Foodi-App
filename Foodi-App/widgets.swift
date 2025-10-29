@@ -17,7 +17,7 @@ struct WidgetButton: View {
         Button(action: action) {
             ZStack {
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color.blue.opacity(0.85))
+                    .fill(Color.foodiBlue.opacity(0.85))
                     .shadow(radius: 3)
                     .frame(height: 300) // taller widgets
                 
@@ -42,7 +42,7 @@ struct WidgetDetailView: View {
             VStack {
                 switch type {
                 case .feed:
-                    FeedView()
+                    FeedContainer()
                         .padding(.top, 20)
 
                 case .leaderboard:

@@ -1,3 +1,11 @@
+//
+//  LeaderboardView.swift
+//  Foodi
+//
+//  Created by d-rod on 10/29/25.
+//
+
+
 import SwiftUI
 
 struct LeaderboardView: View {

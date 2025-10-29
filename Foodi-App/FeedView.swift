@@ -1,7 +1,7 @@
 import SwiftUI
 import FirebaseFirestore
 
-struct FeedView: View {
+struct FeedContainer: View {
     @State private var posts: [Post] = []
     @State private var usernames: [String: String] = [:]
     

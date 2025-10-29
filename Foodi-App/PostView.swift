@@ -46,15 +46,15 @@ struct PostView: View {
                             photoLibrary: .shared()
                         ) {
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.blue.opacity(0.15))
+                                .fill(Color.foodiBlue.opacity(0.15))
                                 .frame(height: 180)
                                 .overlay(
                                     VStack {
                                         Image(systemName: "photo.badge.plus")
                                             .font(.system(size: 36))
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(.foodiBlue)
                                         Text("Attach a photo")
-                                            .foregroundColor(.blue)
+                                            .foregroundColor(.foodiBlue)
                                             .font(.headline)
                                     }
                                 )
@@ -82,7 +82,7 @@ struct PostView: View {
                     }) {
                         HStack {
                             Image(systemName: "mappin.and.ellipse")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.foodiBlue)
                             Text(restaurantTag.isEmpty ? "Select a restaurant" : restaurantTag)
                                 .foregroundColor(restaurantTag.isEmpty ? .secondary : .primary)
                             Spacer()
@@ -117,7 +117,7 @@ struct PostView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(title.isEmpty || description.isEmpty ? Color.gray : Color.blue)
+                                .background(title.isEmpty || description.isEmpty ? Color.gray : Color.foodiBlue)
                                 .cornerRadius(12)
                         }
                     }

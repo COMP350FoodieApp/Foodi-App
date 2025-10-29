@@ -1,3 +1,10 @@
+//
+//  MapWidgetView.swift
+//  Foodi
+//
+//  Created by Hasan on 10/12/25.
+//
+
 import Foundation
 import MapKit
 
