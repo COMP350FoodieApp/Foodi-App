@@ -23,7 +23,7 @@ struct HomeView: View {
                         VStack(spacing: 10) {
                             Image(systemName: "text.bubble.fill")
                                 .font(.system(size: 36))
-                                .foregroundColor(.blue)
+                                .foregroundColor(.foodiBlue)
                             Text("Feed")
                                 .font(.headline)
                                 .foregroundColor(.primary)
@@ -91,7 +91,7 @@ struct HomeView: View {
                     Button(action: { showPostSheet.toggle() }) {
                         ZStack {
                             Circle()
-                                .fill(Color.blue)
+                                .fill(Color.foodiBlue)
                                 .frame(width: 70, height: 70)
                                 .shadow(radius: 5)
                             
@@ -130,7 +130,7 @@ struct FloatingSearchUsersButton: View {
                 }) {
                     ZStack {
                         Circle()
-                            .fill(Color.blue)
+                            .fill(Color.foodiBlue)
                             .frame(width: 70, height: 70)
                             .shadow(radius: 5)
 

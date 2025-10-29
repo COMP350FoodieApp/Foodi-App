@@ -135,7 +135,7 @@ struct UserProfileSheet: View {
                         .fontWeight(.semibold)
                         .padding(.horizontal, 24)
                         .padding(.vertical, 10)
-                        .background(isFollowing ? Color.gray.opacity(0.2) : Color.blue)
+                        .background(isFollowing ? Color.gray.opacity(0.2) : Color.foodiBlue)
                         .foregroundColor(isFollowing ? .black : .white)
                         .cornerRadius(8)
                 }

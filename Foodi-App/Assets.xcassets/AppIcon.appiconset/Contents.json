@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "fda.png",
+      "filename" : "foodiapp copy.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "fda 1.png",
+      "filename" : "foodiapp copy 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "fda 2.png",
+      "filename" : "foodiapp copy 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
