@@ -2,7 +2,7 @@
 //  HomeView.swift
 //  Foodi
 //
-//  Created by Francisco Campa on 10/12/25.
+//  Edited by d-rod on 10/29/25.
 //
 
 import SwiftUI
