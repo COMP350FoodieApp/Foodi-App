@@ -42,22 +42,9 @@ struct WidgetDetailView: View {
             VStack {
                 switch type {
                 case .feed:
-                    ScrollView {
-                        VStack(spacing: 16) {
-                            Text("🍔 Your Food Feed")
-                                .font(.largeTitle).bold()
-                                .padding(.top, 20)
-                            
-                            ForEach(0..<10) { index in
-                                RoundedRectangle(cornerRadius: 12)
-                                    .fill(Color.orange.opacity(0.2))
-                                    .frame(height: 120)
-                                    .overlay(Text("Food Post #\(index + 1)"))
-                                    .padding(.horizontal)
-                            }
-                        }
-                    }
-                    
+                    FeedView()
+                        .padding(.top, 20)
+
                 case .leaderboard:
                     ScrollView {
                         VStack(spacing: 12) {

@@ -8,6 +8,8 @@
 import SwiftUI
 import PhotosUI
 import MapKit
+import FirebaseStorage
+import FirebaseAuth
 
 struct PostView: View {
     @Environment(\.dismiss) private var dismiss
@@ -19,12 +21,15 @@ struct PostView: View {
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var selectedImageData: Data? = nil
     @State private var showRestaurantMap = false
+    @State private var isSubmitting = false
+    @State private var errorMessage = ""
+    
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-    
+                    
                     // Image Picker Preview
                     if let data = selectedImageData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
@@ -100,20 +105,29 @@ struct PostView: View {
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                     
-                    // (Removed file/photo picker with paperclip icon)
-
-                    
                     // Submit Button
                     Button(action: submitPost) {
-                        Text("Post")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(title.isEmpty || description.isEmpty ? Color.gray : Color.blue)
-                            .cornerRadius(12)
+                        if isSubmitting {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                        } else {
+                            Text("Post")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(title.isEmpty || description.isEmpty ? Color.gray : Color.blue)
+                                .cornerRadius(12)
+                        }
                     }
-                    .disabled(title.isEmpty || description.isEmpty)
+                    .disabled(title.isEmpty || description.isEmpty || isSubmitting)
+                    
+                    if !errorMessage.isEmpty {
+                        Text(errorMessage)
+                            .foregroundColor(.red)
+                            .font(.footnote)
+                    }
                 }
                 .padding()
             }
@@ -128,14 +142,85 @@ struct PostView: View {
     
     // MARK: - Submit Action
     private func submitPost() {
-        // Placeholder for posting logic (Firebase, backend, etc.)
-        print("New post created:")
-        print("Title: \(title)")
-        print("Description: \(description)")
-        if selectedImageData != nil {
-            print("Image attached ")
+        guard !title.isEmpty, !description.isEmpty else { return }
+        isSubmitting = true
+        errorMessage = ""
+        
+        if let imageData = selectedImageData {
+            uploadImageAndSavePost(imageData: imageData)
+        } else {
+            savePostToFirestore(imageURL: nil)
+        }
+    }
+    
+    // MARK: - Upload to Firebase Storage
+    private func uploadImageAndSavePost(imageData: Data) {
+        let imageID = UUID().uuidString
+        let storageRef = Storage.storage().reference().child("postImages/\(imageID).jpg")
+        
+        // Metadata helps Firebase recognize it as an image
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpeg"
+        
+        // Start upload
+        let uploadTask = storageRef.putData(imageData, metadata: metadata)
+        
+        //Wait for upload to finish before fetching URL
+        uploadTask.observe(.success) { _ in
+            storageRef.downloadURL { url, error in
+                if let error = error {
+                    errorMessage = "Failed to get image URL: \(error.localizedDescription)"
+                    isSubmitting = false
+                    return
+                }
+                
+                guard let imageURL = url?.absoluteString else {
+                    errorMessage = "No download URL returned."
+                    isSubmitting = false
+                    return
+                }
+                
+                print(" Uploaded image URL: \(imageURL)")
+                savePostToFirestore(imageURL: imageURL)
+            }
         }
         
-        dismiss()
+        uploadTask.observe(.failure) { snapshot in
+            if let error = snapshot.error {
+                errorMessage = "Upload failed: \(error.localizedDescription)"
+            } else {
+                errorMessage = "Upload failed: unknown reason."
+            }
+            isSubmitting = false
+        }
+    }
+    
+    
+    
+    
+    // MARK: Save post to Firestore
+    private func savePostToFirestore(imageURL: String?) {
+        guard let user = Auth.auth().currentUser else {
+            errorMessage = "You must be logged in to post."
+            isSubmitting = false
+            return
+        }
+        
+        PostManager.shared.addPost(
+            title: title,
+            content: description,
+            imageURL: imageURL
+        ) { result in
+            DispatchQueue.main.async {
+                isSubmitting = false
+                switch result {
+                case .success:
+                    print(" Post saved for user \(user.uid)")
+                    dismiss()
+                case .failure(let error):
+                    errorMessage = "Failed to save post: \(error.localizedDescription)"
+                }
+            }
+        }
     }
 }
