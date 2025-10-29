@@ -6,15 +6,9 @@
 //
 
 import SwiftUI
-import FirebaseCore
 
 @main
 struct FoodiApp: App {
-    init() {
-      FirebaseApp.configure()
-      print("APP ▶︎ FoodiApp.init() ran")
-    }
-    
     var body: some Scene {
         WindowGroup {
             SplashView() // Launches to splash screen first

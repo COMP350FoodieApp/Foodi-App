@@ -59,8 +59,29 @@ struct WidgetDetailView: View {
                     }
                     
                 case .leaderboard:
-                    NavigationView {
-                        LeaderboardView()   // ✅ use your real backend-connected view
+                    ScrollView {
+                        VStack(spacing: 12) {
+                            Text("🏆 Top Foodies Leaderboard")
+                                .font(.largeTitle).bold()
+                                .padding(.top, 20)
+                            
+                            ForEach(1..<11) { rank in
+                                HStack {
+                                    Text("#\(rank)").font(.title3).bold()
+                                    Spacer()
+                                    Text("User \(rank)").font(.headline)
+                                    Spacer()
+                                    Text("\(Int.random(in: 100...500)) pts")
+                                        .font(.subheadline).foregroundColor(.gray)
+                                }
+                                .padding()
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.orange.opacity(0.2))
+                                )
+                                .padding(.horizontal)
+                            }
+                        }
                     }
                     
                 case .map:
