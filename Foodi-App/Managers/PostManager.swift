@@ -23,22 +23,31 @@ class PostManager {
             return
         }
 
-        let postData: [String: Any] = [
-            "title": title,
-            "content": content,
-            "imageURL": imageURL ?? "",
-            "author": user.uid,
-            "timestamp": Timestamp(date: Date())
-        ]
+        let userRef = db.collection("users").document(user.uid)
+        userRef.getDocument { snapshot, error in
+            var displayName = "Unknown User"
+            if let data = snapshot?.data(), let username = data["username"] as? String {
+                displayName = username
+            }
 
-        db.collection("posts").addDocument(data: postData) { error in
-            if let error = error {
-                completion(.failure(error))
-            } else {
-                completion(.success(()))
+            let postData: [String: Any] = [
+                "title": title,
+                "content": content,
+                "imageURL": imageURL ?? "",
+                "author": displayName,  //Save username instead of UID
+                "timestamp": Timestamp(date: Date())
+            ]
+
+            self.db.collection("posts").addDocument(data: postData) { error in
+                if let error = error {
+                    completion(.failure(error))
+                } else {
+                    completion(.success(()))
+                }
             }
         }
     }
+
 
     //Fetch posts
     func fetchPosts(completion: @escaping ([Post]) -> Void) {
