@@ -19,7 +19,7 @@ class AuthManager {
             }
             guard let user = result?.user else { return }
 
-            // Base profile data (unchanged)
+            // User profile  data as before
             var userData: [String: Any] = [
                 "uid": user.uid,
                 "fullName": fullName,
@@ -54,7 +54,7 @@ class AuthManager {
             if let error = error {
                 completion(.failure(error))
             } else if let user = result?.user {
-                // ✅ ADDED: backfill leaderboard fields if an older account is missing them
+
                 self.ensureLeaderboardFields(for: user.uid)
                 completion(.success(user))
             }
@@ -97,4 +97,59 @@ class AuthManager {
             ]
         ], merge: true)
     }
+    // MARK: - Profile fetch/observe
+    func loadUserProfile(completion: @escaping (Result<[String: Any], Error>) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(.failure(NSError(domain: "AuthManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "No signed-in user"])))
+            return
+        }
+        db.collection("users").document(uid).getDocument { snap, err in
+            if let err = err { completion(.failure(err)); return }
+            completion(.success(snap?.data() ?? [:]))
+        }
+    }
+
+    func observeUserProfile(listener: @escaping ([String: Any]) -> Void) -> ListenerRegistration? {
+        guard let uid = Auth.auth().currentUser?.uid else { return nil }
+        return db.collection("users").document(uid).addSnapshotListener { snap, _ in
+            listener(snap?.data() ?? [:])
+        }
+    }
+
+    // MARK: - Preferences
+    func setNotificationsEnabled(_ enabled: Bool, completion: @escaping (Error?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(NSError(domain: "AuthManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "No signed-in user"]))
+            return
+        }
+        db.collection("users").document(uid).setData(["notificationsEnabled": enabled], merge: true, completion: completion)
+    }
+
+    // MARK: - Basic profile updates
+    func updateProfile(fullName: String? = nil, bio: String? = nil, profilePicURL: String? = nil, completion: @escaping (Error?) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(NSError(domain: "AuthManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "No signed-in user"]))
+            return
+        }
+        var patch: [String: Any] = [:]
+        if let fullName { patch["fullName"] = fullName }
+        if let bio { patch["bio"] = bio }
+        if let profilePicURL { patch["profilePicURL"] = profilePicURL }
+        guard !patch.isEmpty else { completion(nil); return }
+        db.collection("users").document(uid).setData(patch, merge: true, completion: completion)
+    }
+
+    // MARK: - Password (with reauth)
+    func updatePassword(currentPassword: String, newPassword: String, completion: @escaping (Error?) -> Void) {
+        guard let user = Auth.auth().currentUser, let email = user.email else {
+            completion(NSError(domain: "AuthManager", code: 401, userInfo: [NSLocalizedDescriptionKey: "No signed-in user"]))
+            return
+        }
+        let cred = EmailAuthProvider.credential(withEmail: email, password: currentPassword)
+        user.reauthenticate(with: cred) { _, reauthErr in
+            if let reauthErr = reauthErr { completion(reauthErr); return }
+            user.updatePassword(to: newPassword, completion: completion)
+        }
+    }
+
 }
