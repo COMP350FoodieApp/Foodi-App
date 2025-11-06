@@ -1,9 +1,11 @@
 import SwiftUI
 import FirebaseFirestore
+import FirebaseAuth
 
 struct FeedContainer: View {
     @State private var posts: [Post] = []
     @State private var usernames: [String: String] = [:]
+    @State private var selectedPost: Post? = nil
     
     
     var body: some View {
@@ -33,16 +35,48 @@ struct FeedContainer: View {
                             Text("by \(usernames[post.author] ?? post.author)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
+                            
+                            if let currentUser = Auth.auth().currentUser {
+                                let email = currentUser.email ?? ""
+                                let currentUsername = email.split(separator: "@").first.map(String.init) ?? ""
+
+                                let ownsByUID = !post.authorId.isEmpty && post.authorId == currentUser.uid
+                                let ownsByName = post.author.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                                    == currentUsername.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+
+                                if ownsByUID || ownsByName {
+                                    Button(role: .destructive) {
+                                        PostManager.shared.deletePost(post) { result in
+                                            switch result {
+                                            case .success: loadPosts()
+                                            case .failure(let error): print("Delete failed:", error.localizedDescription)
+                                            }
+                                        }
+                                    } label: {
+                                        Label("Delete Post", systemImage: "trash")
+                                    }
+                                    .padding(.top, 4)
+                                }
+                            }
+
+                            
                         }
                         .padding()
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(12)
                         .padding(.horizontal)
+                        .onTapGesture { selectedPost = post }
                     }
                 }
             }
             .navigationTitle("Food Feed")
             .onAppear(perform: loadPosts)
+            .fullScreenCover(item: $selectedPost) { post in
+                NavigationStack {
+                    PostDetailView(post: post)
+                }
+            }
+
         }
     }
     

@@ -209,8 +209,10 @@ struct PostView: View {
         PostManager.shared.addPost(
             title: title,
             content: description,
+            restaurantName: restaurantTag,
             imageURL: imageURL
         ) { result in
+
             DispatchQueue.main.async {
                 isSubmitting = false
                 switch result {
