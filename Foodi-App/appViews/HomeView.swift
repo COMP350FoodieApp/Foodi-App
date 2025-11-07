@@ -113,6 +113,8 @@ struct HomeView: View {
         .fullScreenCover(item: $selectedWidget) { widget in
             WidgetDetailView(type: widget, selectedWidget: $selectedWidget)
         }
+        
+
     }
 }
 

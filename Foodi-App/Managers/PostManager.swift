@@ -99,6 +99,31 @@ class PostManager {
             }
     }
     
+    func fetchPostsByUser(userId: String, completion: @escaping ([Post]) -> Void) {
+        db.collection("posts")
+            .whereField("authorId", isEqualTo: userId)
+            .order(by: "timestamp", descending: true)
+            .addSnapshotListener { snap, _ in
+                guard let docs = snap?.documents else { return completion([]) }
+
+                let posts = docs.compactMap { doc -> Post? in
+                    let data = doc.data()
+                    return Post(
+                        id: doc.documentID,
+                        title: data["title"] as? String ?? "",
+                        content: data["content"] as? String ?? "",
+                        imageURL: data["imageURL"] as? String,
+                        author: data["author"] as? String ?? "",
+                        authorId: data["authorId"] as? String ?? "",
+                        restaurantName: data["restaurantName"] as? String,
+                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+                    )
+                }
+                completion(posts)
+            }
+    }
+
+    
     
     // in PostManager
     func deletePost(_ post: Post, completion: @escaping (Result<Void, Error>) -> Void) {

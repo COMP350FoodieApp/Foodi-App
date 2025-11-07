@@ -92,11 +92,11 @@ struct PostDetailView: View {
                         
                         PostManager.shared.addComment(to: post, text: trimmed) { error in
                             if let error = error {
-                                print("🔥 COMMENT WRITE ERROR:", error.localizedDescription)
+                                print("OMMENT WRITE ERROR:", error.localizedDescription)
                             } else {
-                                print("✅ COMMENT SAVED")
+                                print("COMMENT SAVED")
 
-                                // ✅ FIX UI FREEZE HERE
+                                
                                 DispatchQueue.main.async {
                                     commentText = ""
                                     hideKeyboard()

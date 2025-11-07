@@ -21,7 +21,7 @@ struct UserSearchView: View {
         ZStack {
             VisualEffectBlur(blurStyle: .systemUltraThinMaterial)
                 .ignoresSafeArea()
-
+            
             VStack {
                 if users.isEmpty && query.isEmpty == false {
                     Text("No users found")
@@ -40,7 +40,7 @@ struct UserSearchView: View {
                                 }
                                 .frame(width: 40, height: 40)
                                 .clipShape(Circle())
-
+                                
                                 Text(user.username)
                                     .font(.headline)
                                     .padding(.vertical, 4)
@@ -64,11 +64,13 @@ struct UserSearchView: View {
                 }
             }
             .sheet(item: $selectedUser) { user in
-                UserProfileSheet(user: user)   // uses SearchUser
+                NavigationStack {
+                    PublicProfileView(userId: user.id)
+                }
             }
         }
     }
-
+    
     private func performSearch() {
         guard !query.isEmpty else {
             users = []
