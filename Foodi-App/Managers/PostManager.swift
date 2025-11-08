@@ -46,7 +46,7 @@ class PostManager {
         }
 
         let userRef = db.collection("users").document(user.uid)
-        userRef.getDocument { snapshot, error in
+        userRef.getDocument { snapshot, _ in
             var displayName = "Unknown User"
             if let data = snapshot?.data(), let username = data["username"] as? String {
                 displayName = username
@@ -65,8 +65,15 @@ class PostManager {
             ]
 
             self.db.collection("posts").addDocument(data: postData) { error in
-                if let error = error { completion(.failure(error)) }
-                else { completion(.success(())) }
+                if let error = error {
+                    completion(.failure(error))
+                    return
+                }
+
+                // ✅ +10 when a post is created
+                ScoreService.shared.bumpOnPostCreated(actorUid: user.uid)
+
+                completion(.success(()))
             }
         }
     }
@@ -152,21 +159,35 @@ class PostManager {
     // MARK: - Likes
     func toggleLike(for post: Post, completion: @escaping (Error?) -> Void) {
         guard let uid = Auth.auth().currentUser?.uid else {
-            return completion(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not logged in"]))
+            return completion(NSError(domain: "", code: 401,
+                                      userInfo: [NSLocalizedDescriptionKey: "Not logged in"]))
         }
 
         let likeRef = db.collection("posts").document(post.id).collection("likes").document(uid)
 
-        likeRef.getDocument { snapshot, error in
+        likeRef.getDocument { snapshot, _ in
             if snapshot?.exists == true {
                 // Unlike
-                likeRef.delete(completion: completion)
+                likeRef.delete { err in
+                    if err == nil {
+                        // ✅ -1 on unlike
+                        ScoreService.shared.bumpOnLikeDelta(actorUid: uid, delta: -1)
+                    }
+                    completion(err)
+                }
             } else {
                 // Like
-                likeRef.setData(["timestamp": Timestamp(date: Date())], completion: completion)
+                likeRef.setData(["timestamp": Timestamp(date: Date())]) { err in
+                    if err == nil {
+                        // ✅ +1 on like
+                        ScoreService.shared.bumpOnLikeDelta(actorUid: uid, delta: +1)
+                    }
+                    completion(err)
+                }
             }
         }
     }
+
 
     func listenForLikes(of post: Post, completion: @escaping (Int) -> Void) {
         db.collection("posts").document(post.id).collection("likes")
@@ -178,7 +199,8 @@ class PostManager {
     // MARK: - Comments
     func addComment(to post: Post, text: String, completion: @escaping (Error?) -> Void) {
         guard let user = Auth.auth().currentUser else {
-            return completion(NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Not logged in"]))
+            return completion(NSError(domain: "", code: 401,
+                                      userInfo: [NSLocalizedDescriptionKey: "Not logged in"]))
         }
 
         let comment: [String: Any] = [
@@ -189,8 +211,15 @@ class PostManager {
         ]
 
         db.collection("posts").document(post.id).collection("comments")
-            .addDocument(data: comment, completion: completion)
+            .addDocument(data: comment) { err in
+                if err == nil {
+                    // ✅ +3 on comment
+                    ScoreService.shared.bumpOnCommentAdded(actorUid: user.uid)
+                }
+                completion(err)
+            }
     }
+
 
     func listenForComments(of post: Post, completion: @escaping ([Comment]) -> Void) {
         db.collection("posts").document(post.id).collection("comments")
