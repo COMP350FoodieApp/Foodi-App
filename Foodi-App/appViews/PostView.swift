@@ -23,6 +23,8 @@ struct PostView: View {
     @State private var showRestaurantMap = false
     @State private var isSubmitting = false
     @State private var errorMessage = ""
+    @State private var rating: Double = 3.0
+
     
     
     var body: some View {
@@ -105,6 +107,36 @@ struct PostView: View {
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                     
+                    // Rating Section
+                    VStack(spacing: 8) {
+                        Text("Rate your experience")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+
+                        HStack(spacing: 6) {
+                            ForEach(1..<6) { burger in
+                                Text("🍔")
+                                    .font(.system(size: 30))
+                                    .scaleEffect(burger <= Int(rating) ? 1.1 : 1.0) // fun size bounce
+                                    .opacity(burger <= Int(rating) ? 1.0 : 0.35)   // faded for unselected
+                                    .onTapGesture {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
+                                            rating = Double(burger)
+                                        }
+                                    }
+                            }
+                        }
+
+                        Text("\(String(format: "%.1f", rating)) / 5 Burgers")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.vertical, 8)
+                    .frame(maxWidth: .infinity)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(10)
+                    .offset(y: -70)
+                    
                     // Submit Button
                     Button(action: submitPost) {
                         if isSubmitting {
@@ -121,6 +153,7 @@ struct PostView: View {
                                 .cornerRadius(12)
                         }
                     }
+                    .offset(y: -90)
                     .disabled(title.isEmpty || description.isEmpty || isSubmitting)
                     
                     if !errorMessage.isEmpty {
@@ -209,8 +242,9 @@ struct PostView: View {
         PostManager.shared.addPost(
             title: title,
             content: description,
-            restaurantName: restaurantTag,
-            imageURL: imageURL
+            imageURL: imageURL,
+            restaurant: restaurantTag,
+            rating: rating
         ) { result in
 
             DispatchQueue.main.async {

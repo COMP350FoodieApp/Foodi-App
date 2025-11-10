@@ -3,7 +3,7 @@ import FirebaseFirestore
 import FirebaseAuth
 import FirebaseStorage
 
-
+// MARK: - Post Model
 struct Post: Identifiable, Codable {
     var id: String
     var title: String
@@ -11,11 +11,13 @@ struct Post: Identifiable, Codable {
     var imageURL: String?
     var author: String
     var authorId: String
-    var restaurantName: String? = nil
+    var restaurantName: String?
+    var restaurant: String?
+    var rating: Double?
     var timestamp: Date
-
 }
 
+// MARK: - Comment Model
 struct Comment: Identifiable {
     let id: String
     let authorName: String
@@ -23,19 +25,21 @@ struct Comment: Identifiable {
     let timestamp: Date
 }
 
-
+// MARK: - PostManager
 class PostManager {
     static let shared = PostManager()
     private let db = Firestore.firestore()
     private init() {}
     
-    //Save a post
-    func addPost(title: String,
-                 content: String,
-                 restaurantName: String?,
-                 imageURL: String? = nil,
-                 completion: @escaping (Result<Void, Error>) -> Void) {
-
+    // MARK: - Add Post
+    func addPost(
+        title: String,
+        content: String,
+        imageURL: String? = nil,
+        restaurant: String? = nil,
+        rating: Double? = nil,
+        completion: @escaping (Result<Void, Error>) -> Void
+    ) {
         guard let user = Auth.auth().currentUser else {
             return completion(.failure(NSError(domain: "", code: 401,
                                                userInfo: [NSLocalizedDescriptionKey: "User not logged in."])))
@@ -48,13 +52,15 @@ class PostManager {
                 displayName = username
             }
 
+            // ✅ Final unified post data
             let postData: [String: Any] = [
                 "title": title,
                 "content": content,
                 "imageURL": imageURL ?? "",
                 "author": displayName,
                 "authorId": user.uid,
-                "restaurantName": restaurantName ?? "",
+                "restaurant": restaurant ?? "",
+                "rating": rating ?? 0.0,
                 "timestamp": Timestamp(date: Date())
             ]
 
@@ -72,11 +78,7 @@ class PostManager {
         }
     }
 
-
-    
-    
-    
-    //Fetch posts
+    // MARK: - Fetch Posts
     func fetchPosts(completion: @escaping ([Post]) -> Void) {
         db.collection("posts")
             .order(by: "timestamp", descending: true)
@@ -96,26 +98,25 @@ class PostManager {
                         imageURL: data["imageURL"] as? String,
                         author: data["author"] as? String ?? "",
                         authorId: data["authorId"] as? String ?? "",
-                        restaurantName: data["restaurantName"] as? String,
+                        restaurantName: data["restaurantName"] as? String ?? "",
+                        restaurant: data["restaurant"] as? String ?? "",
+                        rating: data["rating"] as? Double ?? 0.0,
                         timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
-
-                        
                     )
                 }
                 
                 completion(posts)
             }
     }
-    
-    
-    // in PostManager
+
+    // MARK: - Delete Post
     func deletePost(_ post: Post, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let user = Auth.auth().currentUser else {
             return completion(.failure(NSError(domain: "", code: 401,
                                                userInfo: [NSLocalizedDescriptionKey: "Not logged in."])))
         }
         
-        //Convert current user email
+        // Convert current user email to username
         let currentUsername = user.email?.split(separator: "@").first.map(String.init) ?? ""
         
         let postAuthorUsername = post.author
@@ -129,23 +130,23 @@ class PostManager {
         let ownsByUID = !post.authorId.isEmpty && post.authorId == user.uid
         let ownsByUsername = postAuthorUsername == currentName
         
-        //allow either UID match or username match
+        // Allow either UID match or username match
         guard ownsByUID || ownsByUsername else {
             return completion(.failure(NSError(domain: "", code: 403,
                                                userInfo: [NSLocalizedDescriptionKey: "You do not own this post."])))
         }
         
-        //delete image in Storage if exists
+        // Delete image in Storage if exists
         if let imageURL = post.imageURL, !imageURL.isEmpty {
             let storageRef = Storage.storage().reference(forURL: imageURL)
             storageRef.delete { error in
                 if let error = error {
-                    print("image delete warning:", error.localizedDescription)
+                    print("⚠️ image delete warning:", error.localizedDescription)
                 }
             }
         }
         
-        //delete Firestore document
+        // Delete Firestore document
         db.collection("posts").document(post.id).delete { error in
             if let error = error {
                 completion(.failure(error))
@@ -154,7 +155,8 @@ class PostManager {
             }
         }
     }
-    
+
+    // MARK: - Likes
     func toggleLike(for post: Post, completion: @escaping (Error?) -> Void) {
         guard let uid = Auth.auth().currentUser?.uid else {
             return completion(NSError(domain: "", code: 401,
@@ -194,6 +196,7 @@ class PostManager {
             }
     }
 
+    // MARK: - Comments
     func addComment(to post: Post, text: String, completion: @escaping (Error?) -> Void) {
         guard let user = Auth.auth().currentUser else {
             return completion(NSError(domain: "", code: 401,
@@ -234,6 +237,4 @@ class PostManager {
                 completion(comments)
             }
     }
-
-    
 }
