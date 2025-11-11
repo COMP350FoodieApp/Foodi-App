@@ -206,9 +206,12 @@ struct ProfileView: View {
                                         .foregroundColor(.secondary)
                                         .padding()
                                 } else {
+                                    // MARK: - Posts
                                     LazyVStack(spacing: 16) {
                                         ForEach(posts) { post in
                                             VStack(alignment: .leading, spacing: 8) {
+
+                                                // Image
                                                 if let imageURL = post.imageURL, let url = URL(string: imageURL) {
                                                     AsyncImage(url: url) { image in
                                                         image.resizable()
@@ -235,10 +238,30 @@ struct ProfileView: View {
                                                         }
                                                     }
                                                 }
+
+                                                //delete
+                                                if let currentUID = Auth.auth().currentUser?.uid,
+                                                   post.authorId == currentUID {
+                                                    Button(role: .destructive) {
+                                                        PostManager.shared.deletePost(post) { result in
+                                                            switch result {
+                                                            case .success:
+                                                                loadUserPosts(uid: currentUID) // Refresh the list after deleting
+                                                            case .failure(let error):
+                                                                print("Delete failed:", error.localizedDescription)
+                                                            }
+                                                        }
+                                                    } label: {
+                                                        Label("Delete Post", systemImage: "trash")
+                                                            .font(.subheadline)
+                                                            .padding(.top, 4)
+                                                    }
+                                                }
                                             }
                                             .padding(.horizontal)
                                         }
                                     }
+
                                 }
                             }
                         }

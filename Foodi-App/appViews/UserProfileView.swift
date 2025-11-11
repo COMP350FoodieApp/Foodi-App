@@ -12,6 +12,8 @@ struct UserProfileView: View {
     @State private var following = 0
     @State private var posts: [Post] = []
     @State private var isFollowing = false
+    @State private var selectedPost: Post? = nil
+
 
     var body: some View {
         ScrollView {
@@ -94,7 +96,9 @@ struct UserProfileView: View {
                 // MARK: - Posts
                 LazyVStack(spacing: 16) {
                     ForEach(posts) { post in
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: 10) {
+                            
+                            // Image
                             if let imageURL = post.imageURL,
                                let url = URL(string: imageURL) {
                                 AsyncImage(url: url) { image in
@@ -105,15 +109,35 @@ struct UserProfileView: View {
                                 .frame(height: 200)
                                 .cornerRadius(10)
                             }
+
                             Text(post.title)
                                 .font(.headline)
+
                             Text(post.content)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
+
+                            if Auth.auth().currentUser?.uid == userId {
+                                Button(role: .destructive) {
+                                    PostManager.shared.deletePost(post) { result in
+                                        switch result {
+                                        case .success:
+                                            loadPosts() // refresh after deletion
+                                        case .failure(let error):
+                                            print("Delete failed:", error.localizedDescription)
+                                        }
+                                    }
+                                } label: {
+                                    Label("Delete Post", systemImage: "trash")
+                                        .font(.subheadline)
+                                        .padding(.top, 4)
+                                }
+                            }
                         }
                         .padding(.horizontal)
                     }
                 }
+
             }
             .padding(.top)
         }

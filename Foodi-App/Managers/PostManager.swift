@@ -52,7 +52,7 @@ class PostManager {
                 displayName = username
             }
 
-            // ✅ Final unified post data
+            // Final unified post data
             let postData: [String: Any] = [
                 "title": title,
                 "content": content,
@@ -70,7 +70,7 @@ class PostManager {
                     return
                 }
 
-                // ✅ +10 when a post is created
+                // +10 when a post is created
                 ScoreService.shared.bumpOnPostCreated(actorUid: user.uid)
 
                 completion(.success(()))
@@ -108,6 +108,96 @@ class PostManager {
                 completion(posts)
             }
     }
+    
+    // MARK: - Fetch posts from followed users
+    func fetchFollowingPosts(for uid: String, completion: @escaping ([Post]) -> Void) {
+        let followingRef = db.collection("users").document(uid).collection("following")
+
+        followingRef.getDocuments { snap, _ in
+            let followedIds = snap?.documents.map { $0.documentID } ?? []
+            print("DEBUG FOLLOWING IDS →", followedIds)
+
+            guard !followedIds.isEmpty else {
+                completion([])
+                return
+            }
+
+            self.db.collection("posts")
+                .whereField("authorId", in: followedIds)
+                .order(by: "timestamp", descending: true)
+                .addSnapshotListener { postSnap, _ in
+                    let posts = postSnap?.documents.compactMap { doc -> Post? in
+                        let data = doc.data()
+                        return Post(
+                            id: doc.documentID,
+                            title: data["title"] as? String ?? "",
+                            content: data["content"] as? String ?? "",
+                            imageURL: data["imageURL"] as? String,
+                            author: data["author"] as? String ?? "",
+                            authorId: data["authorId"] as? String ?? "",
+                            restaurantName: data["restaurant"] as? String,
+                            restaurant: data["restaurant"] as? String,
+                            rating: data["rating"] as? Double ?? 0.0,
+                            timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+                        )
+                    } ?? []
+                    
+                    completion(posts)
+                }
+        }
+    }
+
+
+
+    // MARK: - For You Feed (simple version)
+    func fetchForYouPosts(for uid: String, completion: @escaping ([Post]) -> Void) {
+
+        // Get user's recent likes to determine interest
+        let likedRef = self.db.collection("posts").whereField("likes", arrayContains: uid)
+
+        likedRef.getDocuments { likedSnap, _ in
+            var interestedRestaurants: [String] = []
+
+            // Collect restaurant preferences
+            likedSnap?.documents.forEach { doc in
+                if let rest = doc.data()["restaurant"] as? String, !rest.isEmpty {
+                    interestedRestaurants.append(rest)
+                }
+            }
+
+            let query = self.db.collection("posts")
+
+            query.getDocuments { snap, _ in
+                let allPosts = snap?.documents.compactMap { doc -> Post? in
+                    let data = doc.data()
+                    return Post(
+                        id: doc.documentID,
+                        title: data["title"] as? String ?? "",
+                        content: data["content"] as? String ?? "",
+                        imageURL: data["imageURL"] as? String,
+                        author: data["author"] as? String ?? "",
+                        authorId: data["authorId"] as? String ?? "",
+                        restaurantName: data["restaurant"] as? String,
+                        restaurant: data["restaurant"] as? String,
+                        rating: data["rating"] as? Double ?? 0.0,
+                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
+                    )
+                } ?? []
+
+                // Rank posts by preference match
+                let sorted = allPosts.sorted { a, b in
+                    let matchA = interestedRestaurants.contains(a.restaurant ?? "")
+                    let matchB = interestedRestaurants.contains(b.restaurant ?? "")
+                    return (matchA ? 1 : 0) > (matchB ? 1 : 0)
+                }
+
+                completion(sorted)
+            }
+        }
+    }
+
+    
+    
 
     // MARK: - Delete Post
     func deletePost(_ post: Post, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -170,7 +260,7 @@ class PostManager {
                 // Unlike
                 likeRef.delete { err in
                     if err == nil {
-                        // ✅ -1 on unlike
+                        //  -1 on unlike
                         ScoreService.shared.bumpOnLikeDelta(actorUid: uid, delta: -1)
                     }
                     completion(err)
@@ -179,7 +269,7 @@ class PostManager {
                 // Like
                 likeRef.setData(["timestamp": Timestamp(date: Date())]) { err in
                     if err == nil {
-                        // ✅ +1 on like
+                        //  +1 on like
                         ScoreService.shared.bumpOnLikeDelta(actorUid: uid, delta: +1)
                     }
                     completion(err)
@@ -213,7 +303,7 @@ class PostManager {
         db.collection("posts").document(post.id).collection("comments")
             .addDocument(data: comment) { err in
                 if err == nil {
-                    // ✅ +3 on comment
+                    // +3 on comment
                     ScoreService.shared.bumpOnCommentAdded(actorUid: user.uid)
                 }
                 completion(err)
