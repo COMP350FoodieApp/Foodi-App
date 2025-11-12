@@ -36,9 +36,8 @@ struct PostView: View {
                     if let data = selectedImageData, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
-                            .scaledToFill()
-                            .frame(height: 220)
-                            .clipped()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
                             .cornerRadius(16)
                             .shadow(radius: 3)
                     } else {
@@ -188,46 +187,38 @@ struct PostView: View {
     
     // MARK: - Upload to Firebase Storage
     private func uploadImageAndSavePost(imageData: Data) {
+        guard let original = UIImage(data: imageData) else {
+            errorMessage = "Invalid image data."
+            return
+        }
+
+        //for image resizing
+        let resized = original.resized(toMax: 1400)
+        guard let compressed = resized.jpegData(compressionQuality: 0.75) else {
+            errorMessage = "Failed to compress image."
+            return
+        }
+
         let imageID = UUID().uuidString
         let storageRef = Storage.storage().reference().child("postImages/\(imageID).jpg")
-        
-        // Metadata helps Firebase recognize it as an image
+
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
+
+        let uploadTask = storageRef.putData(compressed, metadata: metadata)
         
-        // Start upload
-        let uploadTask = storageRef.putData(imageData, metadata: metadata)
-        
-        //Wait for upload to finish before fetching URL
         uploadTask.observe(.success) { _ in
             storageRef.downloadURL { url, error in
-                if let error = error {
-                    errorMessage = "Failed to get image URL: \(error.localizedDescription)"
-                    isSubmitting = false
-                    return
-                }
-                
-                guard let imageURL = url?.absoluteString else {
-                    errorMessage = "No download URL returned."
-                    isSubmitting = false
-                    return
-                }
-                
-                print(" Uploaded image URL: \(imageURL)")
-                savePostToFirestore(imageURL: imageURL)
+                if let error = error { errorMessage = error.localizedDescription; return }
+                savePostToFirestore(imageURL: url?.absoluteString)
             }
         }
         
-        uploadTask.observe(.failure) { snapshot in
-            if let error = snapshot.error {
-                errorMessage = "Upload failed: \(error.localizedDescription)"
-            } else {
-                errorMessage = "Upload failed: unknown reason."
-            }
-            isSubmitting = false
+        uploadTask.observe(.failure) { snap in
+            errorMessage = snap.error?.localizedDescription ?? "Upload failed."
         }
     }
-    
+
     
     
     

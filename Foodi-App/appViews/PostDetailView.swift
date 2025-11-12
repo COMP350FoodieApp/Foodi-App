@@ -20,10 +20,12 @@ struct PostDetailView: View {
                     AsyncImage(url: URL(string: imageURL)) { image in
                         image
                             .resizable()
-                            .scaledToFill()
-                    } placeholder: { ProgressView() }
-                    .frame(height: 300)
-                    .clipped()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity)
+                            .clipped()
+                    } placeholder: {
+                        ProgressView()
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 6) {
@@ -92,11 +94,10 @@ struct PostDetailView: View {
                         
                         PostManager.shared.addComment(to: post, text: trimmed) { error in
                             if let error = error {
-                                print("🔥 COMMENT WRITE ERROR:", error.localizedDescription)
+                                print("COMMENT WRITE ERROR:", error.localizedDescription)
                             } else {
-                                print("✅ COMMENT SAVED")
+                                print("COMMENT SAVED")
 
-                                // ✅ FIX UI FREEZE HERE
                                 DispatchQueue.main.async {
                                     commentText = ""
                                     hideKeyboard()
