@@ -29,9 +29,7 @@ struct UserSearchView: View {
                         .padding(.top, 40)
                 } else {
                     List(users) { user in
-                        Button {
-                            selectedUser = user
-                        } label: {
+                        NavigationLink(destination: UserProfileView(userId: user.id)) {
                             HStack {
                                 AsyncImage(url: URL(string: user.profileImageURL ?? "")) { image in
                                     image.resizable().scaledToFill()
@@ -62,9 +60,6 @@ struct UserSearchView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Cancel") { dismiss() }
                 }
-            }
-            .sheet(item: $selectedUser) { user in
-                UserProfileSheet(user: user)   // uses SearchUser
             }
         }
     }
