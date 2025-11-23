@@ -209,56 +209,61 @@ struct ProfileView: View {
                                     // MARK: - Posts
                                     LazyVStack(spacing: 16) {
                                         ForEach(posts) { post in
-                                            VStack(alignment: .leading, spacing: 8) {
+                                            NavigationLink {
+                                                PostDetailView(post: post)
+                                            } label: {
+                                                VStack(alignment: .leading, spacing: 8) {
 
-                                                // Image
-                                                if let imageURL = post.imageURL, let url = URL(string: imageURL) {
-                                                    AsyncImage(url: url) { image in
-                                                        image.resizable()
-                                                            .scaledToFill()
-                                                    } placeholder: {
-                                                        ProgressView()
-                                                    }
-                                                    .frame(height: 180)
-                                                    .cornerRadius(10)
-                                                }
-
-                                                Text(post.title)
-                                                    .font(.headline)
-                                                Text(post.content)
-                                                    .font(.subheadline)
-                                                    .foregroundColor(.secondary)
-
-                                                if let rating = post.rating {
-                                                    HStack(spacing: 4) {
-                                                        ForEach(1..<6) { i in
-                                                            Text("🍔")
-                                                                .font(.system(size: 16))
-                                                                .opacity(Double(i) <= rating ? 1.0 : 0.3)
+                                                    // Image
+                                                    if let imageURL = post.imageURL, let url = URL(string: imageURL) {
+                                                        AsyncImage(url: url) { image in
+                                                            image.resizable()
+                                                                .scaledToFill()
+                                                        } placeholder: {
+                                                            ProgressView()
                                                         }
+                                                        .frame(height: 180)
+                                                        .cornerRadius(10)
                                                     }
-                                                }
 
-                                                //delete
-                                                if let currentUID = Auth.auth().currentUser?.uid,
-                                                   post.authorId == currentUID {
-                                                    Button(role: .destructive) {
-                                                        PostManager.shared.deletePost(post) { result in
-                                                            switch result {
-                                                            case .success:
-                                                                loadUserPosts(uid: currentUID) // Refresh the list after deleting
-                                                            case .failure(let error):
-                                                                print("Delete failed:", error.localizedDescription)
+                                                    Text(post.title)
+                                                        .font(.headline)
+
+                                                    Text(post.content)
+                                                        .font(.subheadline)
+                                                        .foregroundColor(.secondary)
+
+                                                    if let rating = post.rating {
+                                                        HStack(spacing: 4) {
+                                                            ForEach(1..<6) { i in
+                                                                Text("🍔")
+                                                                    .font(.system(size: 16))
+                                                                    .opacity(Double(i) <= rating ? 1.0 : 0.3)
                                                             }
                                                         }
-                                                    } label: {
-                                                        Label("Delete Post", systemImage: "trash")
-                                                            .font(.subheadline)
-                                                            .padding(.top, 4)
+                                                    }
+
+                                                    if let currentUID = Auth.auth().currentUser?.uid,
+                                                       post.authorId == currentUID {
+                                                        Button(role: .destructive) {
+                                                            PostManager.shared.deletePost(post) { result in
+                                                                switch result {
+                                                                case .success:
+                                                                    loadUserPosts(uid: currentUID)
+                                                                case .failure(let error):
+                                                                    print("Delete failed:", error.localizedDescription)
+                                                                }
+                                                            }
+                                                        } label: {
+                                                            Label("Delete Post", systemImage: "trash")
+                                                                .font(.subheadline)
+                                                                .padding(.top, 4)
+                                                        }
                                                     }
                                                 }
+                                                .padding(.horizontal)
                                             }
-                                            .padding(.horizontal)
+                                            .buttonStyle(.plain)
                                         }
                                     }
 

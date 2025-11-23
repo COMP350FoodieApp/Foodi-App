@@ -45,7 +45,10 @@ struct MapWidgetView: View {
                     position = .region(context.region)
                 }
             }
-            .onAppear { requestUserLocation() }
+            .onAppear {
+                requestUserLocation()
+            }
+
 
             // MARK: - Overlay UI
             VStack {
