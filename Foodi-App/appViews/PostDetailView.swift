@@ -1,6 +1,7 @@
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
+import CoreLocation
 
 struct PostDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -10,6 +11,9 @@ struct PostDetailView: View {
     @State private var likeCount: Int = 0
     @State private var userHasLiked = false
     @State private var comments: [Comment] = []
+    @State private var showMap = false
+    @State private var mapTarget: CLLocationCoordinate2D? = nil
+
     
     var body: some View {
         ScrollView {
@@ -33,11 +37,26 @@ struct PostDetailView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    if let restaurant = post.restaurantName, !restaurant.isEmpty {
-                        Label(restaurant, systemImage: "mappin.and.ellipse")
-                            .foregroundColor(.foodiBlue)
+                    if let restaurantName = (post.restaurant ?? post.restaurantName),
+                       !restaurantName.isEmpty {
+                        
+                        NavigationLink(
+                            destination: RestaurantProfileView(
+                                restaurantName: restaurantName,
+                                coordinate: CLLocationCoordinate2D(
+                                    latitude: post.restaurantLat ?? 0,
+                                    longitude: post.restaurantLon ?? 0
+                                )
+                            )
+                        ) {
+                            Label(restaurantName, systemImage: "mappin.and.ellipse")
+                                .foregroundColor(.foodiBlue)
+                                .font(.headline)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
+
                 
                 Text(post.content)
                     .font(.body)
@@ -113,6 +132,18 @@ struct PostDetailView: View {
             }
             .padding()
         }
+        
+        .sheet(isPresented: $showMap) {
+            if let target = mapTarget {
+                RestaurantMapSheet(
+                    target: target,
+                    restaurantName: (post.restaurant ?? post.restaurantName) ?? "Restaurant"
+                )
+            }
+        }
+
+
+        
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
