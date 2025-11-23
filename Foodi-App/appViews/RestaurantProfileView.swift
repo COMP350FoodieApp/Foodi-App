@@ -20,10 +20,8 @@ struct RestaurantProfileView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 20) {
-                
-                // ------------------------------------------------------
+
                 // MARK: TAP-TO-OPEN MAP
-                // ------------------------------------------------------
                 ZStack {
                     Map {
                         Marker(restaurantName, coordinate: coordinate)
@@ -48,9 +46,8 @@ struct RestaurantProfileView: View {
                 }
                 
                 
-                // ------------------------------------------------------
                 // MARK: RESTAURANT NAME + AVG RATING
-                // ------------------------------------------------------
+
                 VStack(spacing: 6) {
                     Text(restaurantName)
                         .font(.largeTitle)
@@ -62,10 +59,9 @@ struct RestaurantProfileView: View {
                         .foregroundColor(.secondary)
                 }
                 
-                
-                // ------------------------------------------------------
+
                 // MARK: HOURS SECTION (future API support)
-                // ------------------------------------------------------
+                
                 if !hours.isEmpty {
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Hours")
@@ -83,9 +79,8 @@ struct RestaurantProfileView: View {
                 }
                 
                 
-                // ------------------------------------------------------
                 // MARK: POSTS ABOUT THIS RESTAURANT
-                // ------------------------------------------------------
+
                 VStack(alignment: .leading, spacing: 12) {
                     Text("Posts")
                         .font(.title2)
