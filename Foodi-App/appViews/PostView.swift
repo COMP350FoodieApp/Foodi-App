@@ -24,8 +24,9 @@ struct PostView: View {
     @State private var isSubmitting = false
     @State private var errorMessage = ""
     @State private var rating: Double = 3.0
+    @State private var restaurantLat: Double? = nil
+    @State private var restaurantLon: Double? = nil
 
-    
     
     var body: some View {
         NavigationStack {
@@ -93,11 +94,17 @@ struct PostView: View {
                         .cornerRadius(10)
                     }
                     .fullScreenCover(isPresented: $showRestaurantMap) {
-                        MapWidgetView(onSelectRestaurant: { selectedRestaurant in
-                            restaurantTag = selectedRestaurant.item.name ?? "Unknown"
+                        MapWidgetView(onSelectRestaurant: { place in
+                            restaurantTag = place.item.name ?? "Unknown"
+                            
+                            restaurantLat = place.item.location.coordinate.latitude
+                            restaurantLon = place.item.location.coordinate.longitude
+
+                            
                             showRestaurantMap = false
                         })
                     }
+
                     
                     // Description Field
                     TextField("Write a description...", text: $description, axis: .vertical)
@@ -235,7 +242,9 @@ struct PostView: View {
             content: description,
             imageURL: imageURL,
             restaurant: restaurantTag,
-            rating: rating
+            rating: rating,
+            restaurantLat: restaurantLat,
+            restaurantLon: restaurantLon
         ) { result in
 
             DispatchQueue.main.async {
