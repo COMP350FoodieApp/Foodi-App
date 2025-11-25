@@ -56,14 +56,32 @@ struct PostDetailView: View {
                         .buttonStyle(.plain)
                     }
                 }
-
+                
+                HStack(spacing: 4) {
+                    ForEach(0..<Int(post.rating ?? 0), id: \.self) { _ in
+                        Text("🍔")
+                            .font(.title3)
+                    }
+                    
+                    Text("\(Int(post.rating ?? 0))/5")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                }
+                .font(.title3)
+                .padding(.vertical, 4)
                 
                 Text(post.content)
                     .font(.body)
                 
-                Text("Posted by \(post.author)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                NavigationLink {
+                    UserProfileView(userId: post.authorId)
+                } label: {
+                    Text(post.author)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.foodiBlue)
+                }
+                .buttonStyle(.plain)
                 
                 Divider().padding(.vertical, 8)
                 
@@ -89,9 +107,15 @@ struct PostDetailView: View {
                 } else {
                     ForEach(comments) { comment in
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(comment.authorName)
-                                .font(.caption)
-                                .fontWeight(.semibold)
+                            NavigationLink {
+                                UserProfileView(userId: comment.authorId)
+                            } label: {
+                                Text(comment.authorName)
+                                    .font(.caption)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.foodiBlue)
+                            }
+                            .buttonStyle(.plain)
                             
                             Text(comment.text)
                                 .font(.body)
