@@ -1,7 +1,6 @@
 import SwiftUI
 import FirebaseAuth
 import FirebaseFirestore
-import CoreLocation
 
 struct PostDetailView: View {
     @Environment(\.dismiss) var dismiss
@@ -11,9 +10,6 @@ struct PostDetailView: View {
     @State private var likeCount: Int = 0
     @State private var userHasLiked = false
     @State private var comments: [Comment] = []
-    @State private var showMap = false
-    @State private var mapTarget: CLLocationCoordinate2D? = nil
-
     
     var body: some View {
         ScrollView {
@@ -37,51 +33,18 @@ struct PostDetailView: View {
                         .font(.title)
                         .fontWeight(.bold)
                     
-                    if let restaurantName = (post.restaurant ?? post.restaurantName),
-                       !restaurantName.isEmpty {
-                        
-                        NavigationLink(
-                            destination: RestaurantProfileView(
-                                restaurantName: restaurantName,
-                                coordinate: CLLocationCoordinate2D(
-                                    latitude: post.restaurantLat ?? 0,
-                                    longitude: post.restaurantLon ?? 0
-                                )
-                            )
-                        ) {
-                            Label(restaurantName, systemImage: "mappin.and.ellipse")
-                                .foregroundColor(.foodiBlue)
-                                .font(.headline)
-                        }
-                        .buttonStyle(.plain)
+                    if let restaurant = post.restaurantName, !restaurant.isEmpty {
+                        Label(restaurant, systemImage: "mappin.and.ellipse")
+                            .foregroundColor(.foodiBlue)
                     }
                 }
-                
-                HStack(spacing: 4) {
-                    ForEach(0..<Int(post.rating ?? 0), id: \.self) { _ in
-                        Text("🍔")
-                            .font(.title3)
-                    }
-                    
-                    Text("\(Int(post.rating ?? 0))/5")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                }
-                .font(.title3)
-                .padding(.vertical, 4)
                 
                 Text(post.content)
                     .font(.body)
                 
-                NavigationLink {
-                    UserProfileView(userId: post.authorId)
-                } label: {
-                    Text(post.author)
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.foodiBlue)
-                }
-                .buttonStyle(.plain)
+                Text("Posted by \(post.author)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
                 
                 Divider().padding(.vertical, 8)
                 
@@ -107,15 +70,9 @@ struct PostDetailView: View {
                 } else {
                     ForEach(comments) { comment in
                         VStack(alignment: .leading, spacing: 4) {
-                            NavigationLink {
-                                UserProfileView(userId: comment.authorId)
-                            } label: {
-                                Text(comment.authorName)
-                                    .font(.caption)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.foodiBlue)
-                            }
-                            .buttonStyle(.plain)
+                            Text(comment.authorName)
+                                .font(.caption)
+                                .fontWeight(.semibold)
                             
                             Text(comment.text)
                                 .font(.body)
@@ -156,18 +113,6 @@ struct PostDetailView: View {
             }
             .padding()
         }
-        
-        .sheet(isPresented: $showMap) {
-            if let target = mapTarget {
-                RestaurantMapSheet(
-                    target: target,
-                    restaurantName: (post.restaurant ?? post.restaurantName) ?? "Restaurant"
-                )
-            }
-        }
-
-
-        
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {

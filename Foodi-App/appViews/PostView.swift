@@ -17,17 +17,15 @@ struct PostView: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var restaurantTag: String = ""
-    @State private var dishName: String = ""
     @State private var selectedWidget: WidgetType? = nil
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var selectedImageData: Data? = nil
     @State private var showRestaurantMap = false
     @State private var isSubmitting = false
     @State private var errorMessage = ""
-    @State private var rating: Int = 3
-    @State private var restaurantLat: Double? = nil
-    @State private var restaurantLon: Double? = nil
+    @State private var rating: Double = 3.0
 
+    
     
     var body: some View {
         NavigationStack {
@@ -79,13 +77,6 @@ struct PostView: View {
                         .cornerRadius(10)
                         .font(.headline)
                     
-                    // Dish Name Field
-                    TextField("Dish name", text: $dishName)
-                        .padding()
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(10)
-                        .font(.headline)
-                    
                     // Restaurant Tag Field
                     Button(action: {
                         showRestaurantMap = true
@@ -102,17 +93,11 @@ struct PostView: View {
                         .cornerRadius(10)
                     }
                     .fullScreenCover(isPresented: $showRestaurantMap) {
-                        MapWidgetView(onSelectRestaurant: { place in
-                            restaurantTag = place.item.name ?? "Unknown"
-                            
-                            restaurantLat = place.item.location.coordinate.latitude
-                            restaurantLon = place.item.location.coordinate.longitude
-
-                            
+                        MapWidgetView(onSelectRestaurant: { selectedRestaurant in
+                            restaurantTag = selectedRestaurant.item.name ?? "Unknown"
                             showRestaurantMap = false
                         })
                     }
-
                     
                     // Description Field
                     TextField("Write a description...", text: $description, axis: .vertical)
@@ -131,17 +116,17 @@ struct PostView: View {
                             ForEach(1..<6) { burger in
                                 Text("🍔")
                                     .font(.system(size: 30))
-                                    .scaleEffect(burger <= rating ? 1.1 : 1.0) // fun size bounce
-                                    .opacity(burger <= rating ? 1.0 : 0.35)   // faded for unselected
+                                    .scaleEffect(burger <= Int(rating) ? 1.1 : 1.0) // fun size bounce
+                                    .opacity(burger <= Int(rating) ? 1.0 : 0.35)   // faded for unselected
                                     .onTapGesture {
                                         withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                                            rating = burger
+                                            rating = Double(burger)
                                         }
                                     }
                             }
                         }
 
-                        Text("\(rating) / 5 Burgers")
+                        Text("\(String(format: "%.1f", rating)) / 5 Burgers")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
@@ -189,7 +174,7 @@ struct PostView: View {
     
     // MARK: - Submit Action
     private func submitPost() {
-        guard !title.isEmpty, !description.isEmpty, !dishName.isEmpty else { return }
+        guard !title.isEmpty, !description.isEmpty else { return }
         isSubmitting = true
         errorMessage = ""
         
@@ -247,13 +232,10 @@ struct PostView: View {
         
         PostManager.shared.addPost(
             title: title,
-            dishName: dishName,
             content: description,
             imageURL: imageURL,
             restaurant: restaurantTag,
-            rating: Double(rating),
-            restaurantLat: restaurantLat,
-            restaurantLon: restaurantLon
+            rating: rating
         ) { result in
 
             DispatchQueue.main.async {
