@@ -93,7 +93,12 @@ struct RestaurantProfileView: View {
                             .padding(.horizontal)
                     } else {
                         ForEach(posts) { post in
-                            PostRowView(post: post)
+                            NavigationLink {
+                                PostDetailView(post: post)
+                            } label: {
+                                PostRowView(post: post)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }

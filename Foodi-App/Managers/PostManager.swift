@@ -7,6 +7,7 @@ import FirebaseStorage
 struct Post: Identifiable, Codable {
     var id: String
     var title: String
+    var dishName: String?
     var content: String
     var imageURL: String?
     var author: String
@@ -23,6 +24,7 @@ struct Post: Identifiable, Codable {
 // MARK: - Comment Model
 struct Comment: Identifiable {
     let id: String
+    let authorId: String
     let authorName: String
     let text: String
     let timestamp: Date
@@ -37,6 +39,7 @@ class PostManager {
     // MARK: - Add Post
     func addPost(
         title: String,
+        dishName: String? = nil,
         content: String,
         imageURL: String? = nil,
         restaurant: String? = nil,
@@ -60,6 +63,7 @@ class PostManager {
             // Final unified post data
             let postData: [String: Any] = [
                 "title": title,
+                "dishName": dishName ?? "",
                 "content": content,
                 "imageURL": imageURL ?? "",
                 "author": displayName,
@@ -101,6 +105,7 @@ class PostManager {
                     return Post(
                         id: doc.documentID,
                         title: data["title"] as? String ?? "",
+                        dishName: data["dishName"] as? String ?? "",
                         content: data["content"] as? String ?? "",
                         imageURL: data["imageURL"] as? String,
                         author: data["author"] as? String ?? "",
@@ -140,6 +145,7 @@ class PostManager {
                         return Post(
                             id: doc.documentID,
                             title: data["title"] as? String ?? "",
+                            dishName: data["dishName"] as? String ?? "",
                             content: data["content"] as? String ?? "",
                             imageURL: data["imageURL"] as? String,
                             author: data["author"] as? String ?? "",
@@ -184,6 +190,7 @@ class PostManager {
                     return Post(
                         id: doc.documentID,
                         title: data["title"] as? String ?? "",
+                        dishName: data["dishName"] as? String ?? "",
                         content: data["content"] as? String ?? "",
                         imageURL: data["imageURL"] as? String,
                         author: data["author"] as? String ?? "",
@@ -332,6 +339,7 @@ class PostManager {
                     let data = doc.data()
                     return Comment(
                         id: doc.documentID,
+                        authorId: data["authorId"] as? String ?? "",
                         authorName: data["authorName"] as? String ?? "Unknown",
                         text: data["text"] as? String ?? "",
                         timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
@@ -357,6 +365,7 @@ class PostManager {
                     return Post(
                         id: doc.documentID,
                         title: data["title"] as? String ?? "",
+                        dishName: data["dishName"] as? String ?? "",
                         content: data["content"] as? String ?? "",
                         imageURL: data["imageURL"] as? String,
                         author: data["author"] as? String ?? "",
