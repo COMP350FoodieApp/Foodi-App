@@ -94,47 +94,53 @@ struct UserProfileView: View {
                 Divider().padding(.vertical, 8)
 
                 // MARK: - Posts
+                // MARK: - Posts
                 LazyVStack(spacing: 16) {
                     ForEach(posts) { post in
-                        VStack(alignment: .leading, spacing: 10) {
-                            
-                            // Image
-                            if let imageURL = post.imageURL,
-                               let url = URL(string: imageURL) {
-                                AsyncImage(url: url) { image in
-                                    image.resizable().scaledToFill()
-                                } placeholder: {
-                                    ProgressView()
-                                }
-                                .frame(height: 200)
-                                .cornerRadius(10)
-                            }
-
-                            Text(post.title)
-                                .font(.headline)
-
-                            Text(post.content)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-
-                            if Auth.auth().currentUser?.uid == userId {
-                                Button(role: .destructive) {
-                                    PostManager.shared.deletePost(post) { result in
-                                        switch result {
-                                        case .success:
-                                            loadPosts() // refresh after deletion
-                                        case .failure(let error):
-                                            print("Delete failed:", error.localizedDescription)
-                                        }
+                        NavigationLink {
+                            PostDetailView(post: post)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 10) {
+                                
+                                // Image
+                                if let imageURL = post.imageURL,
+                                   let url = URL(string: imageURL) {
+                                    AsyncImage(url: url) { image in
+                                        image.resizable().scaledToFill()
+                                    } placeholder: {
+                                        ProgressView()
                                     }
-                                } label: {
-                                    Label("Delete Post", systemImage: "trash")
-                                        .font(.subheadline)
-                                        .padding(.top, 4)
+                                    .frame(height: 200)
+                                    .cornerRadius(10)
+                                }
+
+                                Text(post.title)
+                                    .font(.headline)
+
+                                Text(post.content)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+
+                                if Auth.auth().currentUser?.uid == userId {
+                                    Button(role: .destructive) {
+                                        PostManager.shared.deletePost(post) { result in
+                                            switch result {
+                                            case .success:
+                                                loadPosts()
+                                            case .failure(let error):
+                                                print("Delete failed:", error.localizedDescription)
+                                            }
+                                        }
+                                    } label: {
+                                        Label("Delete Post", systemImage: "trash")
+                                            .font(.subheadline)
+                                            .padding(.top, 4)
+                                    }
                                 }
                             }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
+                        .buttonStyle(.plain)
                     }
                 }
 
