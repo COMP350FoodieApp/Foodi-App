@@ -6,18 +6,22 @@
 //
 
 import SwiftUI
+import FirebaseAuth
+import FirebaseFirestore
 
 // MARK: - HomeView (2×2 board with one movable hole; drag only; no Combine)
 struct HomeView: View {
     @State private var selectedWidget: WidgetType? = nil
     @State private var showPostSheet = false
+    @State private var unreadCount: Int = 0
+    @State private var showUserSearch = false
 
     // Persisted layout
     private static let layoutKey = "widgetLayoutJSON"
 
     // Board config: today we expose 2×2 = 4 slots (one is always empty)
     private static let BOARD_COLUMNS = 2
-    private static let BOARD_CAPACITY = 4   // raise to 6, 8, ... for longer column later
+    private static let BOARD_CAPACITY = 6   // raise to 6, 8, ... for longer column later
 
     // In-memory items (each carries its absolute board position in 0..<BOARD_CAPACITY)
     @State private var items: [Item]
@@ -28,10 +32,12 @@ struct HomeView: View {
 
     // Init: load layout or seed defaults (hole starts at last slot)
     init() {
+        UserDefaults.standard.removeObject(forKey: Self.layoutKey)
         let defaults: [Item] = [
             Item(kind: .leaderboard, pos: 0),
             Item(kind: .feed,        pos: 1),
-            Item(kind: .map,         pos: 2) // hole is 3
+            Item(kind: .notifications, pos: 2),
+            Item(kind: .map,         pos: 3) // hole is 4
         ]
         if
             let str = UserDefaults.standard.string(forKey: Self.layoutKey),
@@ -69,6 +75,7 @@ struct HomeView: View {
                                         switch item.kind {
                                         case .feed:        selectedWidget = .feed
                                         case .leaderboard: selectedWidget = .leaderboard
+                                        case .notifications: selectedWidget = .notifications
                                         case .map:         selectedWidget = .map
                                         }
                                     }
@@ -86,11 +93,37 @@ struct HomeView: View {
                 .padding(.bottom, 100) // space for FABs
             }
 
-            // Floating Post Button (bottom-right)
             VStack {
                 Spacer()
                 HStack {
+                    // LEFT BUTTON: Search users
+                    Button(action: { 
+                        // mimic FloatingSearchUsersButton behavior
+                        showUserSearch.toggle()
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.foodiBlue)
+                                .frame(width: 70, height: 70)
+                                .shadow(radius: 5)
+                            ZStack {
+                                Image(systemName: "person.fill")
+                                    .font(.system(size: 26, weight: .semibold))
+                                    .offset(x: -3, y: 0)
+                                Image(systemName: "magnifyingglass")
+                                    .font(.system(size: 16, weight: .semibold))
+                                    .offset(x: 8, y: 4)
+                            }
+                            .foregroundColor(.white)
+                        }
+                    }
+                    .sheet(isPresented: $showUserSearch) {
+                        NavigationStack { UserSearchView() }
+                    }
+
                     Spacer()
+
+                    // RIGHT BUTTON: Create Post
                     Button(action: { showPostSheet.toggle() }) {
                         ZStack {
                             Circle()
@@ -102,18 +135,19 @@ struct HomeView: View {
                                 .foregroundColor(.white)
                         }
                     }
-                    .padding()
                     .sheet(isPresented: $showPostSheet) { PostView() }
                 }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 30)
             }
-
-            // Floating user-search (bottom-left)
-            FloatingSearchUsersButton()
         }
         .fullScreenCover(item: $selectedWidget) { widget in
             WidgetDetailView(type: widget, selectedWidget: $selectedWidget)
         }
         .onChange(of: items) { _, _ in save() } // iOS 17+ signature
+        .onAppear {
+            listenForUnreadNotifications()
+        }
     }
 
     // MARK: - View content (fixed "small" size for all)
@@ -148,6 +182,33 @@ struct HomeView: View {
             .cornerRadius(16)
             .shadow(color: .black.opacity(0.05), radius: 3, x: 0, y: 2)
 
+        case .notifications:
+            ZStack(alignment: .topTrailing) {
+                VStack(spacing: 10) {
+                    Image(systemName: "bell.fill")
+                        .font(.system(size: 36))
+                        .foregroundColor(.red)
+                    Text("Notifications").font(.headline).foregroundColor(.primary)
+                    Text("See recent activity")
+                        .font(.subheadline).foregroundColor(.secondary)
+                }
+                .frame(width: Frames.small.width, height: Frames.small.height)
+                .background(Color(.secondarySystemBackground))
+                .cornerRadius(16)
+                .shadow(color: .black.opacity(0.05), radius: 3, x: 0, y: 2)
+
+                if unreadCount > 0 {
+                    Text("\(unreadCount)")
+                        .font(.caption2)
+                        .fontWeight(.bold)
+                        .padding(6)
+                        .background(Color.red)
+                        .foregroundColor(.white)
+                        .clipShape(Circle())
+                        .offset(x: -10, y: 10)
+                }
+            }
+
         case .map:
             MapWidgetView()
                 .disabled(true) // keep widget inert; drag gestures belong to wrapper
@@ -159,6 +220,18 @@ struct HomeView: View {
     }
 
     // MARK: - Board helpers
+
+    private func listenForUnreadNotifications() {
+        guard let uid = Auth.auth().currentUser?.uid else { return }
+        Firestore.firestore()
+            .collection("users")
+            .document(uid)
+            .collection("notifications")
+            .whereField("read", isEqualTo: false)
+            .addSnapshotListener { snap, _ in
+                unreadCount = snap?.documents.count ?? 0
+            }
+    }
 
     private func item(at slot: Int) -> Item? {
         items.first { $0.pos == slot }
@@ -237,7 +310,7 @@ struct HomeView: View {
 
 // MARK: - Local types (scoped to HomeView)
 private extension HomeView {
-    enum Kind: String, Codable, CaseIterable { case feed, leaderboard, map }
+    enum Kind: String, Codable, CaseIterable { case feed, leaderboard, map, notifications }
 
     struct Item: Identifiable, Codable, Equatable {
         var id: UUID = UUID()       // <-- default id fixes the compile error
@@ -338,4 +411,3 @@ struct FloatingSearchUsersButton: View {
         .ignoresSafeArea(edges: .bottom)
     }
 }
-

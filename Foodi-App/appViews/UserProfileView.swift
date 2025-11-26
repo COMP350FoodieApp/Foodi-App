@@ -241,6 +241,25 @@ struct UserProfileView: View {
                         if error == nil {
                             isFollowing = true
                             followers += 1
+                            // === Notifications: Follow ===
+                            if userId != currentUserId {
+                                let notifRef = db.collection("users")
+                                    .document(userId)
+                                    .collection("notifications")
+
+                                db.collection("users").document(currentUserId).getDocument { snap, _ in
+                                    let fromUsername = (snap?.data()?["username"] as? String) ?? "Someone"
+
+                                    let notifData: [String: Any] = [
+                                        "type": "follow",
+                                        "fromUserId": currentUserId,
+                                        "fromUsername": fromUsername,
+                                        "timestamp": Timestamp(date: Date())
+                                    ]
+
+                                    notifRef.addDocument(data: notifData)
+                                }
+                            }
                         }
                     }
                 }

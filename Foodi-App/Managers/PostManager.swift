@@ -291,6 +291,27 @@ class PostManager {
                     if err == nil {
                         //  +1 on like
                         ScoreService.shared.bumpOnLikeDelta(actorUid: uid, delta: +1)
+                        // === Notifications: Like ===
+                        if post.authorId != uid {
+                            let notifRef = self.db.collection("users")
+                                .document(post.authorId)
+                                .collection("notifications")
+
+                            self.db.collection("users").document(uid).getDocument { snap, _ in
+                                let fromUsername = (snap?.data()?["username"] as? String) ?? "Someone"
+
+                                let notifData: [String: Any] = [
+                                    "type": "like",
+                                    "fromUserId": uid,
+                                    "fromUsername": fromUsername,
+                                    "postId": post.id,
+                                    "timestamp": Timestamp(date: Date()),
+                                    "read": false
+                                ]
+
+                                notifRef.addDocument(data: notifData)
+                            }
+                        }
                     }
                     completion(err)
                 }
@@ -325,6 +346,28 @@ class PostManager {
                 if err == nil {
                     // +3 on comment
                     ScoreService.shared.bumpOnCommentAdded(actorUid: user.uid)
+                    // === Notifications: Comment ===
+                    if post.authorId != user.uid {
+                        let notifRef = self.db.collection("users")
+                            .document(post.authorId)
+                            .collection("notifications")
+
+                        self.db.collection("users").document(user.uid).getDocument { snap, _ in
+                            let fromUsername = (snap?.data()?["username"] as? String) ?? "Someone"
+
+                            let notifData: [String: Any] = [
+                                "type": "comment",
+                                "fromUserId": user.uid,
+                                "fromUsername": fromUsername,
+                                "postId": post.id,
+                                "commentText": text,
+                                "timestamp": Timestamp(date: Date()),
+                                "read": false
+                            ]
+
+                            notifRef.addDocument(data: notifData)
+                        }
+                    }
                 }
                 completion(err)
             }

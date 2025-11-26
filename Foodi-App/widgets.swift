@@ -49,6 +49,11 @@ struct WidgetDetailView: View {
                     NavigationView {
                         LeaderboardView()   // ✅ use your real backend-connected view
                     }
+                
+                case .notifications:
+                    NavigationView {
+                        NotificationsView()
+                    }
                     
                 case .map:
                     // Full interactive map view
@@ -73,7 +78,7 @@ struct WidgetDetailView: View {
 
 // MARK: - Widget Type Enum
 enum WidgetType: String, Identifiable {
-    case feed, leaderboard, map
+    case feed, leaderboard, notifications, map
     
     var id: String { rawValue }
     
@@ -81,6 +86,7 @@ enum WidgetType: String, Identifiable {
         switch self {
         case .feed: return "Feed"
         case .leaderboard: return "Leaderboard (Top Foodies)"
+        case .notifications: return "Notifications"
         case .map: return "Map"
         }
     }
