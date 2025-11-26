@@ -38,55 +38,58 @@ class PostManager {
     
     // MARK: - Add Post
     func addPost(
-        title: String,
-        dishName: String? = nil,
-        content: String,
-        imageURL: String? = nil,
-        restaurant: String? = nil,
-        rating: Double? = nil,
-        restaurantLat: Double? = nil,
-        restaurantLon: Double? = nil,
-        completion: @escaping (Result<Void, Error>) -> Void
-    ) {
-        guard let user = Auth.auth().currentUser else {
-            return completion(.failure(NSError(domain: "", code: 401,
-                                               userInfo: [NSLocalizedDescriptionKey: "User not logged in."])))
-        }
-        
-        let userRef = db.collection("users").document(user.uid)
-        userRef.getDocument { snapshot, _ in
-            var displayName = "Unknown User"
-            if let data = snapshot?.data(), let username = data["username"] as? String {
-                displayName = username
+            title: String,
+            content: String,
+            imageURL: String? = nil,
+            restaurant: String? = nil,
+            rating: Double? = nil,
+            restaurantLat: Double? = nil,
+            restaurantLon: Double? = nil,
+            foodType: String? = nil,
+            completion: @escaping (Result<Void, Error>) -> Void
+        ) {
+            guard let user = Auth.auth().currentUser else {
+                return completion(.failure(NSError(
+                    domain: "",
+                    code: 401,
+                    userInfo: [NSLocalizedDescriptionKey: "User not logged in."]
+                )))
             }
             
-            // Final unified post data
-            let postData: [String: Any] = [
-                "title": title,
-                "dishName": dishName ?? "",
-                "content": content,
-                "imageURL": imageURL ?? "",
-                "author": displayName,
-                "authorId": user.uid,
-                "restaurant": restaurant ?? "",
-                "rating": rating ?? 0.0,
-                "restaurantLat": restaurantLat ?? NSNull(),
-                "restaurantLon": restaurantLon ?? NSNull(),
-                "timestamp": Timestamp(date: Date())
-            ]
-            
-            self.db.collection("posts").addDocument(data: postData) { error in
-                if let error = error {
-                    completion(.failure(error))
-                    return
+            let userRef = db.collection("users").document(user.uid)
+            userRef.getDocument { snapshot, _ in
+                var displayName = "Unknown User"
+                if let data = snapshot?.data(),
+                   let username = data["username"] as? String {
+                    displayName = username
                 }
                 
-                // +10 when a post is created
-                ScoreService.shared.bumpOnPostCreated(actorUid: user.uid)
+                let postData: [String: Any] = [
+                    "title": title,
+                    "content": content,
+                    "imageURL": imageURL ?? "",
+                    "author": displayName,
+                    "authorId": user.uid,
+                    "restaurant": restaurant ?? "",
+                    "rating": rating ?? 0.0,
+                    "restaurantLat": restaurantLat ?? NSNull(),
+                    "restaurantLon": restaurantLon ?? NSNull(),
+                    "foodType": foodType ?? "",
+                    "timestamp": Timestamp(date: Date())
+                ]
                 
-                completion(.success(()))
+                self.db.collection("posts").addDocument(data: postData) { error in
+                    if let error = error {
+                        completion(.failure(error))
+                        return
+                    }
+                    
+                    // +10 when a post is created
+                    ScoreService.shared.bumpOnPostCreated(actorUid: user.uid)
+                    
+                    completion(.success(()))
+                }
             }
-        }
     }
     
     // MARK: - Fetch Posts
