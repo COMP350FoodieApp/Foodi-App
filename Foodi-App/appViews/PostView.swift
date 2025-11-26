@@ -1,9 +1,4 @@
-//
-//  PostView.swift
-//  Foodi
-//
-//  Created by Francisco Campa on 10/12/25.
-//
+// Foodi-App/appViews/PostView.swift
 
 import SwiftUI
 import PhotosUI
@@ -17,25 +12,24 @@ struct PostView: View {
     @State private var title: String = ""
     @State private var description: String = ""
     @State private var restaurantTag: String = ""
-    @State private var dishName: String = ""
     @State private var selectedWidget: WidgetType? = nil
     @State private var selectedPhoto: PhotosPickerItem? = nil
     @State private var selectedImageData: Data? = nil
     @State private var showRestaurantMap = false
     @State private var isSubmitting = false
     @State private var errorMessage = ""
-    @State private var rating: Int = 3
+    @State private var rating: Double = 3.0
+    @State private var selectedFoodTypeIndex = 0
     @State private var restaurantLat: Double? = nil
     @State private var restaurantLon: Double? = nil
 
-    
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    
+                VStack(spacing: 10) {
                     // Image Picker Preview
-                    if let data = selectedImageData, let uiImage = UIImage(data: data) {
+                    if let data = selectedImageData,
+                       let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                             .scaledToFit()
@@ -73,23 +67,14 @@ struct PostView: View {
                     }
                     
                     // Title Field
-                    TextField("Title", text: $title)
-                        .padding()
-                        .background(Color(.secondarySystemBackground))
-                        .cornerRadius(10)
-                        .font(.headline)
-                    
-                    // Dish Name Field
-                    TextField("Dish name", text: $dishName)
+                    TextField("Dish Name", text: $title)
                         .padding()
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
                         .font(.headline)
                     
                     // Restaurant Tag Field
-                    Button(action: {
-                        showRestaurantMap = true
-                    }) {
+                    Button(action: { showRestaurantMap = true }) {
                         HStack {
                             Image(systemName: "mappin.and.ellipse")
                                 .foregroundColor(.foodiBlue)
@@ -104,22 +89,33 @@ struct PostView: View {
                     .fullScreenCover(isPresented: $showRestaurantMap) {
                         MapWidgetView(onSelectRestaurant: { place in
                             restaurantTag = place.item.name ?? "Unknown"
-                            
                             restaurantLat = place.item.location.coordinate.latitude
                             restaurantLon = place.item.location.coordinate.longitude
-
-                            
                             showRestaurantMap = false
                         })
                     }
 
-                    
                     // Description Field
                     TextField("Write a description...", text: $description, axis: .vertical)
                         .lineLimit(5, reservesSpace: true)
                         .padding()
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
+                    
+                    // Food Type Picker
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Food Type")
+                            .font(.headline)
+                        Picker("Food Type", selection: $selectedFoodTypeIndex) {
+                            ForEach(FoodTypes.all.indices, id: \.self) { index in
+                                Text(FoodTypes.all[index]).tag(index)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                    }
+                    .padding(.vertical, 6)
+                    .background(Color(.secondarySystemBackground))
+                    .cornerRadius(10)
                     
                     // Rating Section
                     VStack(spacing: 8) {
@@ -131,25 +127,24 @@ struct PostView: View {
                             ForEach(1..<6) { burger in
                                 Text("🍔")
                                     .font(.system(size: 30))
-                                    .scaleEffect(burger <= rating ? 1.1 : 1.0) // fun size bounce
-                                    .opacity(burger <= rating ? 1.0 : 0.35)   // faded for unselected
+                                    .scaleEffect(burger <= Int(rating) ? 1.1 : 1.0)
+                                    .opacity(burger <= Int(rating) ? 1.0 : 0.35)
                                     .onTapGesture {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.5)) {
-                                            rating = burger
+                                        withAnimation(.spring(response: 0.3,
+                                                              dampingFraction: 0.5)) {
+                                            rating = Double(burger)
                                         }
                                     }
                             }
                         }
 
-                        Text("\(rating) / 5 Burgers")
+                        Text("\(String(format: "%.1f", rating)) / 5 Burgers")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
-                    .offset(y: -70)
                     
                     // Submit Button
                     Button(action: submitPost) {
@@ -163,11 +158,12 @@ struct PostView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(title.isEmpty || description.isEmpty ? Color.gray : Color.foodiBlue)
+                                .background(title.isEmpty || description.isEmpty
+                                            ? Color.gray
+                                            : Color.foodiBlue)
                                 .cornerRadius(12)
                         }
                     }
-                    .offset(y: -90)
                     .disabled(title.isEmpty || description.isEmpty || isSubmitting)
                     
                     if !errorMessage.isEmpty {
@@ -177,7 +173,10 @@ struct PostView: View {
                     }
                 }
                 .padding()
+                .padding(.bottom, 10)   // extra scroll room at bottom
             }
+            .scrollDismissesKeyboard(.interactively)
+            .ignoresSafeArea(.keyboard)
             .navigationTitle("Share Your Food")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -189,7 +188,7 @@ struct PostView: View {
     
     // MARK: - Submit Action
     private func submitPost() {
-        guard !title.isEmpty, !description.isEmpty, !dishName.isEmpty else { return }
+        guard !title.isEmpty, !description.isEmpty else { return }
         isSubmitting = true
         errorMessage = ""
         
@@ -207,7 +206,6 @@ struct PostView: View {
             return
         }
 
-        //for image resizing
         let resized = original.resized(toMax: 1400)
         guard let compressed = resized.jpegData(compressionQuality: 0.75) else {
             errorMessage = "Failed to compress image."
@@ -215,7 +213,9 @@ struct PostView: View {
         }
 
         let imageID = UUID().uuidString
-        let storageRef = Storage.storage().reference().child("postImages/\(imageID).jpg")
+        let storageRef = Storage.storage()
+            .reference()
+            .child("postImages/\(imageID).jpg")
 
         let metadata = StorageMetadata()
         metadata.contentType = "image/jpeg"
@@ -224,7 +224,10 @@ struct PostView: View {
         
         uploadTask.observe(.success) { _ in
             storageRef.downloadURL { url, error in
-                if let error = error { errorMessage = error.localizedDescription; return }
+                if let error = error {
+                    errorMessage = error.localizedDescription
+                    return
+                }
                 savePostToFirestore(imageURL: url?.absoluteString)
             }
         }
@@ -234,10 +237,7 @@ struct PostView: View {
         }
     }
 
-    
-    
-    
-    // MARK: Save post to Firestore
+    // MARK: - Save post to Firestore
     private func savePostToFirestore(imageURL: String?) {
         guard let user = Auth.auth().currentUser else {
             errorMessage = "You must be logged in to post."
@@ -245,22 +245,23 @@ struct PostView: View {
             return
         }
         
+        let pickedFoodType = FoodTypes.all[selectedFoodTypeIndex]
+        
         PostManager.shared.addPost(
             title: title,
-            dishName: dishName,
             content: description,
             imageURL: imageURL,
             restaurant: restaurantTag,
-            rating: Double(rating),
+            rating: rating,
             restaurantLat: restaurantLat,
-            restaurantLon: restaurantLon
+            restaurantLon: restaurantLon,
+            foodType: pickedFoodType
         ) { result in
-
             DispatchQueue.main.async {
                 isSubmitting = false
                 switch result {
                 case .success:
-                    print(" Post saved for user \(user.uid)")
+                    print("Post saved for user \(user.uid)")
                     dismiss()
                 case .failure(let error):
                     errorMessage = "Failed to save post: \(error.localizedDescription)"
