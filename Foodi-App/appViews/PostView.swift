@@ -19,6 +19,7 @@ struct PostView: View {
     @State private var isSubmitting = false
     @State private var errorMessage = ""
     @State private var rating: Double = 3.0
+    
     @State private var selectedFoodTypeIndex = 0
     @State private var restaurantLat: Double? = nil
     @State private var restaurantLon: Double? = nil
@@ -94,7 +95,6 @@ struct PostView: View {
                             showRestaurantMap = false
                         })
                     }
-
                     // Description Field
                     TextField("Write a description...", text: $description, axis: .vertical)
                         .lineLimit(5, reservesSpace: true)

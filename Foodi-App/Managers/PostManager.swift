@@ -7,7 +7,6 @@ import FirebaseStorage
 struct Post: Identifiable, Codable {
     var id: String
     var title: String
-    var dishName: String?
     var content: String
     var imageURL: String?
     var author: String
@@ -16,15 +15,11 @@ struct Post: Identifiable, Codable {
     var restaurant: String?
     var rating: Double?
     var timestamp: Date
-    var restaurantLat: Double?
-    var restaurantLon: Double?
-
 }
 
 // MARK: - Comment Model
 struct Comment: Identifiable {
     let id: String
-    let authorId: String
     let authorName: String
     let text: String
     let timestamp: Date
@@ -91,7 +86,7 @@ class PostManager {
                 }
             }
     }
-    
+
     // MARK: - Fetch Posts
     func fetchPosts(completion: @escaping ([Post]) -> Void) {
         db.collection("posts")
@@ -108,7 +103,6 @@ class PostManager {
                     return Post(
                         id: doc.documentID,
                         title: data["title"] as? String ?? "",
-                        dishName: data["dishName"] as? String ?? "",
                         content: data["content"] as? String ?? "",
                         imageURL: data["imageURL"] as? String,
                         author: data["author"] as? String ?? "",
@@ -116,9 +110,7 @@ class PostManager {
                         restaurantName: data["restaurantName"] as? String ?? "",
                         restaurant: data["restaurant"] as? String ?? "",
                         rating: data["rating"] as? Double ?? 0.0,
-                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date(),
-                        restaurantLat: data["restaurantLat"] as? Double,
-                        restaurantLon: data["restaurantLon"] as? Double
+                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
                     )
                 }
                 
@@ -129,16 +121,16 @@ class PostManager {
     // MARK: - Fetch posts from followed users
     func fetchFollowingPosts(for uid: String, completion: @escaping ([Post]) -> Void) {
         let followingRef = db.collection("users").document(uid).collection("following")
-        
+
         followingRef.getDocuments { snap, _ in
             let followedIds = snap?.documents.map { $0.documentID } ?? []
             print("DEBUG FOLLOWING IDS →", followedIds)
-            
+
             guard !followedIds.isEmpty else {
                 completion([])
                 return
             }
-            
+
             self.db.collection("posts")
                 .whereField("authorId", in: followedIds)
                 .order(by: "timestamp", descending: true)
@@ -148,7 +140,6 @@ class PostManager {
                         return Post(
                             id: doc.documentID,
                             title: data["title"] as? String ?? "",
-                            dishName: data["dishName"] as? String ?? "",
                             content: data["content"] as? String ?? "",
                             imageURL: data["imageURL"] as? String,
                             author: data["author"] as? String ?? "",
@@ -156,9 +147,7 @@ class PostManager {
                             restaurantName: data["restaurant"] as? String,
                             restaurant: data["restaurant"] as? String,
                             rating: data["rating"] as? Double ?? 0.0,
-                            timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date(),
-                            restaurantLat: data["restaurantLat"] as? Double,
-                            restaurantLon: data["restaurantLon"] as? Double
+                            timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
                         )
                     } ?? []
                     
@@ -166,34 +155,33 @@ class PostManager {
                 }
         }
     }
-    
-    
-    
+
+
+
     // MARK: - For You Feed (simple version)
     func fetchForYouPosts(for uid: String, completion: @escaping ([Post]) -> Void) {
-        
+
         // Get user's recent likes to determine interest
         let likedRef = self.db.collection("posts").whereField("likes", arrayContains: uid)
-        
+
         likedRef.getDocuments { likedSnap, _ in
             var interestedRestaurants: [String] = []
-            
+
             // Collect restaurant preferences
             likedSnap?.documents.forEach { doc in
                 if let rest = doc.data()["restaurant"] as? String, !rest.isEmpty {
                     interestedRestaurants.append(rest)
                 }
             }
-            
+
             let query = self.db.collection("posts")
-            
+
             query.getDocuments { snap, _ in
                 let allPosts = snap?.documents.compactMap { doc -> Post? in
                     let data = doc.data()
                     return Post(
                         id: doc.documentID,
                         title: data["title"] as? String ?? "",
-                        dishName: data["dishName"] as? String ?? "",
                         content: data["content"] as? String ?? "",
                         imageURL: data["imageURL"] as? String,
                         author: data["author"] as? String ?? "",
@@ -201,27 +189,25 @@ class PostManager {
                         restaurantName: data["restaurant"] as? String,
                         restaurant: data["restaurant"] as? String,
                         rating: data["rating"] as? Double ?? 0.0,
-                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date(),
-                        restaurantLat: data["restaurantLat"] as? Double,
-                        restaurantLon: data["restaurantLon"] as? Double
+                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
                     )
                 } ?? []
-                
+
                 // Rank posts by preference match
                 let sorted = allPosts.sorted { a, b in
                     let matchA = interestedRestaurants.contains(a.restaurant ?? "")
                     let matchB = interestedRestaurants.contains(b.restaurant ?? "")
                     return (matchA ? 1 : 0) > (matchB ? 1 : 0)
                 }
-                
+
                 completion(sorted)
             }
         }
     }
+
     
     
-    
-    
+
     // MARK: - Delete Post
     func deletePost(_ post: Post, completion: @escaping (Result<Void, Error>) -> Void) {
         guard let user = Auth.auth().currentUser else {
@@ -268,16 +254,16 @@ class PostManager {
             }
         }
     }
-    
+
     // MARK: - Likes
     func toggleLike(for post: Post, completion: @escaping (Error?) -> Void) {
         guard let uid = Auth.auth().currentUser?.uid else {
             return completion(NSError(domain: "", code: 401,
                                       userInfo: [NSLocalizedDescriptionKey: "Not logged in"]))
         }
-        
+
         let likeRef = db.collection("posts").document(post.id).collection("likes").document(uid)
-        
+
         likeRef.getDocument { snapshot, _ in
             if snapshot?.exists == true {
                 // Unlike
@@ -321,29 +307,29 @@ class PostManager {
             }
         }
     }
-    
-    
+
+
     func listenForLikes(of post: Post, completion: @escaping (Int) -> Void) {
         db.collection("posts").document(post.id).collection("likes")
             .addSnapshotListener { snap, _ in
                 completion(snap?.documents.count ?? 0)
             }
     }
-    
+
     // MARK: - Comments
     func addComment(to post: Post, text: String, completion: @escaping (Error?) -> Void) {
         guard let user = Auth.auth().currentUser else {
             return completion(NSError(domain: "", code: 401,
                                       userInfo: [NSLocalizedDescriptionKey: "Not logged in"]))
         }
-        
+
         let comment: [String: Any] = [
             "authorId": user.uid,
             "authorName": user.email?.split(separator: "@").first.map(String.init) ?? "Unknown",
             "text": text,
             "timestamp": Timestamp(date: Date())
         ]
-        
+
         db.collection("posts").document(post.id).collection("comments")
             .addDocument(data: comment) { err in
                 if err == nil {
@@ -375,8 +361,8 @@ class PostManager {
                 completion(err)
             }
     }
-    
-    
+
+
     func listenForComments(of post: Post, completion: @escaping ([Comment]) -> Void) {
         db.collection("posts").document(post.id).collection("comments")
             .order(by: "timestamp", descending: false)
@@ -385,47 +371,12 @@ class PostManager {
                     let data = doc.data()
                     return Comment(
                         id: doc.documentID,
-                        authorId: data["authorId"] as? String ?? "",
                         authorName: data["authorName"] as? String ?? "Unknown",
                         text: data["text"] as? String ?? "",
                         timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date()
                     )
                 } ?? []
                 completion(comments)
-            }
-    }
-    
-    func fetchPosts(forRestaurant name: String, completion: @escaping ([Post]) -> Void) {
-        db.collection("posts")
-            .whereField("restaurant", isEqualTo: name)
-            .order(by: "timestamp", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    print("Restaurant fetch error:", error.localizedDescription)
-                    completion([])
-                    return
-                }
-                
-                let posts = snapshot?.documents.compactMap { doc -> Post? in
-                    let data = doc.data()
-                    return Post(
-                        id: doc.documentID,
-                        title: data["title"] as? String ?? "",
-                        dishName: data["dishName"] as? String ?? "",
-                        content: data["content"] as? String ?? "",
-                        imageURL: data["imageURL"] as? String,
-                        author: data["author"] as? String ?? "",
-                        authorId: data["authorId"] as? String ?? "",
-                        restaurantName: data["restaurant"] as? String,
-                        restaurant: data["restaurant"] as? String,
-                        rating: data["rating"] as? Double ?? 0.0,
-                        timestamp: (data["timestamp"] as? Timestamp)?.dateValue() ?? Date(),
-                        restaurantLat: data["restaurantLat"] as? Double,
-                        restaurantLon: data["restaurantLon"] as? Double
-                    )
-                } ?? []
-                
-                completion(posts)
             }
     }
 }
