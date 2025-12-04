@@ -428,4 +428,52 @@ class PostManager {
                 completion(posts)
             }
     }
+
+    // MARK: - Saved Posts (Bookmark System)
+
+    /// Check if a post is saved by the current user
+    func isPostSaved(postId: String, completion: @escaping (Bool) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(false)
+            return
+        }
+
+        let ref = db.collection("users")
+            .document(uid)
+            .collection("savedPosts")
+            .document(postId)
+
+        ref.getDocument { snap, _ in
+            completion(snap?.exists == true)
+        }
+    }
+
+    /// Toggle saved/unsaved state
+    func toggleSaved(postId: String, completion: @escaping (Bool) -> Void) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            completion(false)
+            return
+        }
+
+        let ref = db.collection("users")
+            .document(uid)
+            .collection("savedPosts")
+            .document(postId)
+
+        ref.getDocument { snap, _ in
+            if snap?.exists == true {
+                // Unsave
+                ref.delete { _ in
+                    completion(false)
+                }
+            } else {
+                // Save
+                ref.setData([
+                    "timestamp": Timestamp(date: Date())
+                ]) { _ in
+                    completion(true)
+                }
+            }
+        }
+    }
 }

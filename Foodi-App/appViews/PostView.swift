@@ -26,7 +26,7 @@ struct PostView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(spacing: 10) {
                     // Image Picker Preview
                     if let data = selectedImageData,
                        let uiImage = UIImage(data: data) {
@@ -67,7 +67,7 @@ struct PostView: View {
                     }
                     
                     // Title Field
-                    TextField("Title", text: $title)
+                    TextField("Dish Name", text: $title)
                         .padding()
                         .background(Color(.secondarySystemBackground))
                         .cornerRadius(10)
@@ -113,7 +113,7 @@ struct PostView: View {
                         }
                         .pickerStyle(.menu)
                     }
-                    .padding()
+                    .padding(.vertical, 6)
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
                     
@@ -142,7 +142,7 @@ struct PostView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    .padding()
+                    .padding(.vertical, 6)
                     .background(Color(.secondarySystemBackground))
                     .cornerRadius(10)
                     
@@ -173,7 +173,7 @@ struct PostView: View {
                     }
                 }
                 .padding()
-                .padding(.bottom, 40)   // extra scroll room at bottom
+                .padding(.bottom, 10)   // extra scroll room at bottom
             }
             .scrollDismissesKeyboard(.interactively)
             .ignoresSafeArea(.keyboard)

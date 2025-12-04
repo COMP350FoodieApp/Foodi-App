@@ -62,6 +62,10 @@ struct WidgetDetailView: View {
                             .ignoresSafeArea(edges: .bottom)
                             .padding(.top, 40) // moves MapWidgetView down slightly
                     }
+                case .saved:
+                    NavigationView {
+                        SavedPostsView()
+                    }
                 }
             }
             
@@ -78,7 +82,7 @@ struct WidgetDetailView: View {
 
 // MARK: - Widget Type Enum
 enum WidgetType: String, Identifiable {
-    case feed, leaderboard, notifications, map
+    case feed, leaderboard, notifications, map, saved
     
     var id: String { rawValue }
     
@@ -88,6 +92,7 @@ enum WidgetType: String, Identifiable {
         case .leaderboard: return "Leaderboard (Top Foodies)"
         case .notifications: return "Notifications"
         case .map: return "Map"
+        case .saved: return "Saved Posts"
         }
     }
 }

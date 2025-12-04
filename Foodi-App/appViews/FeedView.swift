@@ -14,6 +14,7 @@ struct FeedContainer: View {
     @State private var usernames: [String: String] = [:]
     @State private var selectedPost: Post? = nil
     @State private var feedType: FeedType = .explore
+    @State private var savedStates: [String: Bool] = [:]
     
     var body: some View {
         NavigationStack {
@@ -87,6 +88,19 @@ struct FeedContainer: View {
                                     .font(.caption)
                                     .foregroundColor(.secondary)
                                 
+                                HStack {
+                                    Spacer()
+                                    Button {
+                                        PostManager.shared.toggleSaved(postId: post.id) { saved in
+                                            savedStates[post.id] = saved
+                                        }
+                                    } label: {
+                                        Image(systemName: (savedStates[post.id] ?? false) ? "bookmark.fill" : "bookmark")
+                                            .font(.title2)
+                                            .foregroundColor((savedStates[post.id] ?? false) ? .blue : .secondary)
+                                    }
+                                }
+                                
                                 // 🗑️ Delete button (owner only)
                                 if let currentUser = Auth.auth().currentUser {
                                     let email = currentUser.email ?? ""
@@ -121,6 +135,11 @@ struct FeedContainer: View {
                             .cornerRadius(12)
                             .padding(.horizontal)
                             .onTapGesture { selectedPost = post }
+                            .onAppear {
+                                PostManager.shared.isPostSaved(postId: post.id) { saved in
+                                    savedStates[post.id] = saved
+                                }
+                            }
                         }
                     }
                 }

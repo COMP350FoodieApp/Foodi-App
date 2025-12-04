@@ -37,7 +37,8 @@ struct HomeView: View {
             Item(kind: .leaderboard, pos: 0),
             Item(kind: .feed,        pos: 1),
             Item(kind: .notifications, pos: 2),
-            Item(kind: .map,         pos: 3) // hole is 4
+            Item(kind: .map,         pos: 3),
+            Item(kind: .saved,       pos: 4)
         ]
         if
             let str = UserDefaults.standard.string(forKey: Self.layoutKey),
@@ -77,6 +78,7 @@ struct HomeView: View {
                                         case .leaderboard: selectedWidget = .leaderboard
                                         case .notifications: selectedWidget = .notifications
                                         case .map:         selectedWidget = .map
+                                        case .saved:       selectedWidget = .saved
                                         }
                                     }
                             }
@@ -216,6 +218,20 @@ struct HomeView: View {
                 .cornerRadius(16)
                 .shadow(radius: 3)
                 .clipped()
+            
+        case .saved:
+            VStack(spacing: 10) {
+                Image(systemName: "bookmark.fill")
+                    .font(.system(size: 36))
+                    .foregroundColor(.black)
+                Text("Bookmarks").font(.headline).foregroundColor(.primary)
+                Text("Saved for later")
+                    .font(.subheadline).foregroundColor(.secondary)
+            }
+            .frame(width: Frames.small.width, height: Frames.small.height)
+            .background(Color(.secondarySystemBackground))
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.05), radius: 3, x: 0, y: 2)
         }
     }
 
@@ -310,7 +326,7 @@ struct HomeView: View {
 
 // MARK: - Local types (scoped to HomeView)
 private extension HomeView {
-    enum Kind: String, Codable, CaseIterable { case feed, leaderboard, map, notifications }
+    enum Kind: String, Codable, CaseIterable { case feed, leaderboard, map, notifications, saved }
 
     struct Item: Identifiable, Codable, Equatable {
         var id: UUID = UUID()       // <-- default id fixes the compile error
